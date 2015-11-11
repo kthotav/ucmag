@@ -53,3 +53,70 @@ CREATE TABLE auth_cas(
     renew CHAR(1)
 );
 success!
+timestamp: 2015-11-11T13:44:30.346954
+CREATE TABLE category(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name CHAR(512)
+);
+success!
+timestamp: 2015-11-11T13:44:30.349721
+CREATE TABLE post(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    category INTEGER REFERENCES category (id) ON DELETE CASCADE  ,
+    title CHAR(512),
+    body TEXT,
+    votes INTEGER,
+    image CHAR(512),
+    is_active CHAR(1),
+    created_on TIMESTAMP,
+    created_by INTEGER REFERENCES auth_user (id) ON DELETE CASCADE  ,
+    modified_on TIMESTAMP,
+    modified_by INTEGER REFERENCES auth_user (id) ON DELETE CASCADE  
+);
+success!
+timestamp: 2015-11-11T13:44:30.352300
+CREATE TABLE vote(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    post INTEGER REFERENCES post (id) ON DELETE CASCADE  ,
+    score INTEGER,
+    is_active CHAR(1),
+    created_on TIMESTAMP,
+    created_by INTEGER REFERENCES auth_user (id) ON DELETE CASCADE  ,
+    modified_on TIMESTAMP,
+    modified_by INTEGER REFERENCES auth_user (id) ON DELETE CASCADE  
+);
+success!
+timestamp: 2015-11-11T13:44:30.354793
+CREATE TABLE comm(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    post INTEGER REFERENCES post (id) ON DELETE CASCADE  ,
+    parent_comm INTEGER REFERENCES comm (id) ON DELETE CASCADE  ,
+    votes INTEGER,
+    body TEXT,
+    image CHAR(512),
+    is_active CHAR(1),
+    created_on TIMESTAMP,
+    created_by INTEGER REFERENCES auth_user (id) ON DELETE CASCADE  ,
+    modified_on TIMESTAMP,
+    modified_by INTEGER REFERENCES auth_user (id) ON DELETE CASCADE  
+);
+success!
+timestamp: 2015-11-11T13:44:30.359247
+CREATE TABLE temp_table(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title CHAR(512),
+    image CHAR(512)
+);
+success!
+timestamp: 2015-11-11T13:44:30.362044
+CREATE TABLE comm_vote(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    comm INTEGER REFERENCES comm (id) ON DELETE CASCADE  ,
+    score INTEGER,
+    is_active CHAR(1),
+    created_on TIMESTAMP,
+    created_by INTEGER REFERENCES auth_user (id) ON DELETE CASCADE  ,
+    modified_on TIMESTAMP,
+    modified_by INTEGER REFERENCES auth_user (id) ON DELETE CASCADE  
+);
+success!
