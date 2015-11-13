@@ -1,0 +1,25 @@
+div div a.board-link {
+   text-decoration:none;
+}
+
+html {
+   font-family: GillSans, Calibri, Trebuchet, sans-serif;
+ }
+
+nav div .brand-logo {
+   text-decoration:none;
+}
+
+.fa {
+   margin-left: 5px;
+   margin-right: 5px;
+}
+
+#date {
+   font-size: 75%;
+}
+
+
+h3 a.add-story {
+   text-decoration: none;
+}

@@ -1,0 +1,47 @@
+{{extend 'layout.html'}}
+
+<div class="row">
+  <div class="section">
+  {{if auth.user:}}
+     {{=A('Create Board', _class='col s12 m3 l3 waves-effect waves-light btn', _href=URL('create_board', vars=dict(_next=URL(args=request.args))))}}
+     {{=A('Log Out', _class='col s12 m3 l3 waves-effect waves-light btn right', _href=URL('user/logout', vars=dict(_next=URL(args=request.args))))}}
+  {{else:}}
+     {{=A('Sign Up', _class='col s12 m3 l3 waves-effect waves-light btn right', _href=URL('user/register', vars=dict(_next=URL(args=request.args))))}}
+     {{=A('Log In', _class='col s12 m3 l3 waves-effect waves-light btn right',_href=URL('user/login', vars=dict(_next=URL(args=request.args))))}}
+  {{pass}}
+  </div>
+</div>
+
+
+<div class="row">
+  {{for board in boards:}}
+  <div class="col s12 m3 l3">
+    <a class="board-link" href="{{=URL('show_board', args=board.id)}}">
+    <div class="card blue-grey lighten-5 z-depth-4" >
+      <div class="card-content black-text">
+        <span class="card-title black-text"><h5>{{=board.title}}</h5></span>
+        <div class="divider teal darken-4"></div>
+        <div class="section">
+          <h4 class="center">{{=board['posts']}}</h4>
+        </br>
+      <h5>New Posts Today</h5>
+        </div>
+      </div>
+    </div>
+    </a>
+  </div>
+  {{pass}}
+</div>
+
+<div class="row center">
+  <div class="section">
+    {{if page>0:}}
+        {{newPageNo=page+1}}
+        {{=A('previous', _class='btn left', _href=URL('default', 'index', args=[page-1]))}}
+        {{=newPageNo}}
+    {{pass}}
+    {{if len(boards)>=items_per_page:}}
+      {{=A('next', _class='btn right', _href=URL('default', 'index', args=[page+1]))}}
+    {{pass}}
+  </div>
+</div>

@@ -9,10 +9,25 @@
 #########################################################################
 
 def index():
-
     rows = db(db.category).select()
     return locals()
-    
+
+
+def create():
+    create = "list posts by author and create posts"
+    return dict(create=create)
+
+def student_life():
+    student = "student_life"
+    return dict(student=student)
+
+def sports():
+    sports = "sports"
+    return dict(sports=sports)
+
+def events():
+    events = "events"
+    return dict(events=events)
 
 
 def user():

@@ -1,8 +1,17 @@
 {{extend 'layout.html'}}
 
-<h2>
-{{=T('Sign Up') if request.args(0) == 'register' else T('Log In') if request.args(0) == 'login' else T(request.args(0).replace('_',' ').title())}}
-</h2>
+<h2>UC Magazine</h2>
+<h4>Discover | Create | Share</h4>
+<h3>Campus Stories</h3>
+{{
+    =T('')
+    if request.args(0) == 'register'
+    else T('')
+
+    if request.args(0) == 'login'
+    else T(request.args(0).replace('_',' ').title())
+}}
+
 
 <div class="container">
     <div class="row">
