@@ -198,6 +198,15 @@ def list_posts_by_datetime():
     stop = start+POSTS_PER_PAGE
     rows = db(db.post.category==category.id).select(orderby=~db.post.created_on,
                                                     limitby=(start,stop))
+
+    if auth.user:
+        db.post.category.default = category.id
+        db.post.uc.requires=IS_IN_SET(['UC1', 'UC2', 'UC3', 'UC4', 'UC5', 'UC6', 'UC7', 'UC8', 'UC9'])
+        form_new_post = SQLFORM(db.post, submit_button='Create').process(next=URL(args=request.args))
+    else:
+        form_new_post = A("Please login to create post", _href=URL('user/login', vars=dict(_next=URL(args=request.args))))
+
+
     return locals()
 
 
@@ -215,6 +224,14 @@ def list_posts_by_votes():
     stop = start+POSTS_PER_PAGE
     rows = db(db.post.category==category.id).select(orderby=~db.post.votes,
                                                     limitby=(start,stop))
+
+    if auth.user:
+        db.post.category.default = category.id
+        db.post.uc.requires=IS_IN_SET(['UC1', 'UC2', 'UC3', 'UC4', 'UC5', 'UC6', 'UC7', 'UC8', 'UC9'])
+        form_new_post = SQLFORM(db.post, submit_button='Create').process(next=URL(args=request.args))
+    else:
+        form_new_post = A("Please login to create post", _href=URL('user/login', vars=dict(_next=URL(args=request.args))))
+
     return locals()
 
 # This allows users to view posts by a particular author. In other words, if you
@@ -252,7 +269,7 @@ def view_post():
 
     if auth.user:
         # Creates a form for editing given the id.
-        form_edit_title = SQLFORM(db.post, id, showid=False, fields=['title'], 
+        form_edit_title = SQLFORM(db.post, id, showid=False, fields=['title'],
             submit_button='Update', _class='form-horizontal').process(formname='edit_title_form', next='view_post/[id]')
         for label in form_edit_title.elements('label'):
             label["_style"] = "display:none;"
@@ -261,9 +278,10 @@ def view_post():
                                     _class="btn btn-default active",
                                     _onclick="cancel_edit_title()"))
 
-        form_edit_post = SQLFORM(db.post, id, showid=False, fields=['body'], submit_button='Update').process(formname='edit_body_form', next='view_post/[id]')
+        db.post.uc.requires=IS_IN_SET(['UC1', 'UC2', 'UC3', 'UC4', 'UC5', 'UC6', 'UC7', 'UC8', 'UC9'])
+        form_edit_post = SQLFORM(db.post, id, showid=False, fields=['body', 'uc'], submit_button='Update').process(formname='edit_body_form', next='view_post/[id]')
         for label in form_edit_post.elements('label'):
-            label["_style"] = "display:none;" 
+            label["_style"] = "display:none;"
         form_edit_post[0][-1][1].append(TAG.INPUT(_value='Cancel',
                                     _type="button",
                                     _class="btn btn-default active",
@@ -280,7 +298,7 @@ def view_post():
         db.comm.post.default = id
         db.comm.parent_comm.default = comment.id if comment else None
         form_comments = SQLFORM(db.comm, submit_button='Add comment').process()
-        
+
         for label in form_comments.elements('label'): label["_style"] = "display:none;"
         no_auth_link=''
     else:
@@ -391,7 +409,7 @@ def delete_post_image():
             session.flash = 'Image removed'
     else:
         session.flash = 'Authorization Failed'
-    return (redirect(URL('view_post', args=post.id))) 
+    return (redirect(URL('view_post', args=post.id)))
 
 
 @auth.requires_login()
@@ -467,5 +485,3 @@ def delete_file(row, uploadfield):
 def test_form():
     form = SQLFORM(db.temp_table).process()
     return locals()
-
-

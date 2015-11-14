@@ -64,7 +64,7 @@ I512
 sg5
 I00
 sg6
-I12
+I13
 sg7
 S'INTEGER REFERENCES auth_user (id) ON DELETE CASCADE  '
 p22
@@ -98,7 +98,7 @@ I512
 sg5
 I00
 sg6
-I7
+I8
 sg7
 S'CHAR(512)'
 p30
@@ -132,7 +132,7 @@ I512
 sg5
 I00
 sg6
-I8
+I9
 sg7
 S'CHAR(1)'
 p38
@@ -149,7 +149,7 @@ I512
 sg5
 I00
 sg6
-I10
+I11
 sg7
 S'INTEGER REFERENCES auth_user (id) ON DELETE CASCADE  '
 p42
@@ -165,7 +165,7 @@ I512
 sg5
 I00
 sg6
-I9
+I10
 sg7
 S'TIMESTAMP'
 p45
@@ -182,7 +182,7 @@ I512
 sg5
 I00
 sg6
-I11
+I12
 sg7
 S'TIMESTAMP'
 p49
@@ -207,4 +207,20 @@ I00
 sg10
 S'id'
 p53
+ssS'uc'
+p54
+(dp55
+g4
+I512
+sg5
+I00
+sg6
+I7
+sg7
+S'CHAR(512)'
+p56
+sg9
+I00
+sg10
+g27
 ss.

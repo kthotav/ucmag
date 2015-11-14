@@ -59,10 +59,9 @@
       <div class="nav-wrapper">
         <a href="#!" class="brand-logo">{{=response.logo}}</a>
         <ul class="left hide-on-med-and-down" style="margin-left:200px;">
-          {{=LI(A('Student Life', _style='text-decoration:none',_href=URL('default', 'student_life')))}}
-          {{=LI(A('Sports', _style='text-decoration:none', _href=URL('default', 'sports')))}}
-          {{=LI(A('Events', _style='text-decoration:none', _href=URL('default', 'events')))}}
-          {{=LI(A('Create', _style='text-decoration:none', _href=URL('default', 'create')))}}
+          {{if response.menu:}}
+            {{=MENU(response.menu)}}
+          {{pass}}
         </ul>
         {{if auth.user:}}
            {{=A('Log Out', _class='col s12 m3 l3 waves-effect waves-light btn right', _style='margin-top:13px', _href=URL('user/logout', vars=dict(_next=URL(args=request.args))))}}

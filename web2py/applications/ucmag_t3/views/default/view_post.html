@@ -57,9 +57,10 @@
         {{pass}}
 
         {{ if post.image: }}
+            {{if auth.user and auth.user.id==post.created_by: }}
             <a href="{{=URL('default', 'delete_post_image', args=post.id)}}" class="btn btn-sm btndel">
                                  <span data-toggle="Delete" title="Remove Image" class="glyphicon glyphicon-remove-sign"></span> </a>
-
+            {{pass}}
             <a href="#viewImageLink" class="btn btn-sm btnview" data-toggle="modal" data-target="#viewPostImage">
                 <img src="{{=URL(r=request, f='download', args=post.image)}}" width="90%">
             </a>
@@ -69,11 +70,11 @@
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
         <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <button type="button" class="close" data-dismiss="modal">×</button>
           <h4 class="modal-title">{{=post.title}}</h4>
         </div>
         <div class="modal-body">
-            <img src="{{=URL(r=request, f='download', args=post.image)}}" class="img-responsive" > 
+            <img src="{{=URL(r=request, f='download', args=post.image)}}" class="img-responsive" >
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -97,7 +98,7 @@
 
 
     {{for comment in comments:}}
-    
+
     {{if auth.user and comment.created_by==auth.user.id:}}
         {{btn_class="btn disabled"
           btn_attr="disabled"
@@ -129,7 +130,7 @@
             <div class="modal-dialog modal-md">
               <div class="modal-content">
                 <div class="modal-header">
-                  <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  <button type="button" class="close" data-dismiss="modal">×</button>
                 </div>
                 <div class="modal-body">
                     <img src="{{=URL(r=request, f='download', args=comment.image)}}" class="img-responsive" >
@@ -148,7 +149,7 @@
         </table>
 
 
-    {{form_edit_comment=SQLFORM(db.comm, comment.id, showid=False, submit_button='Update', 
+    {{form_edit_comment=SQLFORM(db.comm, comment.id, showid=False, submit_button='Update',
           _class='form-horizontal form-inline').process(next='view_post/'+str(comment.post))
       for label in form_edit_comment.elements('label'): label["_style"] = "display:none;"
     }}
@@ -198,7 +199,7 @@
     }
 
     $( "#editBodyLink" ).click(function() {
-        show_edit_body(); 
+        show_edit_body();
     });
 
     function show_edit_title() {
@@ -234,4 +235,8 @@
        jQuery('[data-direction=up]').click(function(){do_ajax_vote(this,'up');});
        jQuery('[data-direction=down]').click(function(){do_ajax_vote(this,'down');});
     });
+
+    $('select option[value=""]').remove();
+    $('#post_uc').prepend('<option value="Choose" hidden >Choose One</option>');
+
 </script>

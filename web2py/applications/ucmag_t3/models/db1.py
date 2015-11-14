@@ -19,7 +19,9 @@ db.define_table('post',
                 Field('title', 'string', requires=IS_NOT_EMPTY()),
                 Field('body', 'text', requires=IS_NOT_EMPTY()),
                 Field('votes', 'integer', default=0, writable=False, readable=False),
-                Field('image', 'upload', autodelete=True, 
+                Field('uc', label="UC", default='[All]',
+                       requires=IS_IN_SET(['[All]', 'UC1', 'UC2', 'UC3', 'UC4', 'UC5', 'UC6', 'UC7', 'UC8', 'UC9'])),
+                Field('image', 'upload', autodelete=True,
                        requires=[IS_EMPTY_OR(IS_IMAGE(error_message="Please choose a valid image")),
                                  IS_LENGTH(5*1024*1024, error_message="Please upload an image within the 5 mb limit")] ),
                 auth.signature)
@@ -50,7 +52,7 @@ db.define_table('comm',
                 Field('parent_comm', 'reference comm', writable=False, readable=False),
                 Field('votes', 'integer', default=0, writable=False, readable=False),
                 Field('body', 'text'),
-                Field('image', 'upload', autodelete=True, 
+                Field('image', 'upload', autodelete=True,
                        requires=[IS_EMPTY_OR(IS_IMAGE(error_message="Please choose a valid image")),
                                  IS_LENGTH(5*1024*1024, error_message="Please upload an image within the 5 mb limit")]),
                 auth.signature)
@@ -104,3 +106,7 @@ def author(id):
 # if db(db.comm).count()<5:
 #     populate(db.comm, 1000)
 #     db.commit()
+
+for row in db(db.post).select(db.post.id, db.post.uc):
+    if not row.uc:
+        db(db.post.id==row.id).update(uc='[All]')

@@ -7,7 +7,9 @@
     <h1>Welcome to {{=category.name.title()}}!</h1>
 
     <!-- Allow for there to be a button to enable the user to create a post. -->
-    {{=A('Post Something', _class='btn btn-primary', _href=URL('create_post', args=category.name))}}
+    <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#formNewPost">
+          <span class="glyphicon glyphicon-plus"></span> New Post
+    </button>
 
     <!-- Allow for there to be a button to enable the user to list posts by time of creation. -->
     {{=A('Sort by Date', _class='btn', _href=URL('list_posts_by_datetime', args=category.name))}}
@@ -17,7 +19,9 @@
     <h1>{{=category.name.title()}}</h1>
 
     <!-- do the same thing except have the page have a button to list posts by the highest number of votes. -->
-    {{=A('Post Something', _class='btn btn-primary', _href=URL('create_post', args=category.name))}}
+    <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#formNewPost">
+          <span class="glyphicon glyphicon-plus"></span> New Post
+    </button>
     {{=A('Sort by Votes', _class='btn', _href=URL('list_posts_by_votes', args=category.name))}}
 
 
@@ -26,6 +30,25 @@
     <h1>{{=category.name.title()}}</h1>
     <h1>{{=author(user_id)}}</h1>
 {{pass}}
+
+          <!-- Modal for Viewing Post Image -->
+          <div class="modal fade" id="formNewPost" role="dialog">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal">×</button>
+                  <h4 class="modal-title">{{=category.name.title()}} /<small> New Post</small></h4>
+                </div>
+                <div class="modal-body">
+                    {{=form_new_post}}
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
 
 {{for post in rows:}}
 
@@ -85,4 +108,9 @@
        jQuery('[data-direction=up]').click(function(){do_ajax_vote(this,'up');});
        jQuery('[data-direction=down]').click(function(){do_ajax_vote(this,'down');});
     });
+
+    $('select option[value=""]').remove();
+
+    $('#post_uc').prepend('<option value="Choose" selected hidden >Choose One</option>');
+
 </script>
