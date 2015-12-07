@@ -1,0 +1,51 @@
+{{extend 'layout.html'}}
+
+<div class = "well">
+    <h2>{{=post.title}}</h2>
+    <h4>Posted by <strong>{{=post.created_by.first_name}} {{=post.created_by.last_name}}</strong></h4>
+    <h5> <i>{{=prettydate(post.created_on)}}</i></h5>
+    {{if post.created_by == auth.user_id:}}
+        {{=A('Edit this post', _class="btn btn-info", _href=URL('edit_post', args=post.id))}}
+    {{pass}}
+    {{if auth.user and auth.user.id == post.created_by:}}
+                <button type="button" onclick="window.location.assign('{{=URL('default', 'delete', args=post.id)}}')"
+                   class="btn btn-danger">Delete Post</button>
+    {{pass}}
+    {{=MARKMIN(post.body)}}
+</div>
+
+{{for comment in comments:}}
+<div class = "well">
+    <table>
+        <tr data-id="{{=comment.id}}">
+            <td><button data-direction="down">-</button></td>
+            <td><span class = "votes">{{=comment.votes}}</span></td>
+            <td><button data-direction="up">+</button></td>
+            <td>
+
+            </td>
+        </tr>
+    </table>
+    {{=prettydate(comment.created_on)}} {{=author(comment.created_by)}} said: "{{=comment.body}}"
+</div>
+{{pass}}
+
+<h3>Add a Comment</h3>
+{{=form}}
+
+<script>
+    function do_ajax_vote(t,direction){
+        var id = jQuery(t).closest('tr').attr('data-id');
+        jQuery.ajax({method: 'post',url:'{{=URL('comm_vote_callback')}}',
+                     data:{'id':id, 'direction': direction},
+                     success: function(data) {
+                        jQuery(t).closest('tr').find('.votes').html(data);
+                     } });
+
+    }
+
+    jQuery(function() {
+       jQuery('[data-direction=up]').click(function(){do_ajax_vote(this,'up');});
+       jQuery('[data-direction=down]').click(function(){do_ajax_vote(this,'down');});
+    });
+</script>
