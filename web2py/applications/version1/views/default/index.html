@@ -1,0 +1,16 @@
+{{extend 'layout.html'}}
+
+{{for category in rows:}}
+
+<div class = "well">
+    {{=A(category.name.title(), _class="btn btn-large btn-primary", _style="width:50%", _href=URL('list_posts_by_votes', args=category.name))}}
+</div>
+
+{{pass}}
+
+
+<footer>
+
+    {{=A('Report an Issue', _href=URL('tasks'))}}
+
+</footer>

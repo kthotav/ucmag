@@ -1,0 +1,26 @@
+{{extend 'layout.html'}}
+
+
+<div class = "well">
+
+    <div style="text-align:right">
+
+        {{=A('Edit Task', _href = URL('edit_task', args=task.id), _class="btn btn-primary")}}
+        {{=A('Back to Tasks', _href = URL('tasks', args=task.id), _class="btn btn-default")}}
+
+    </div>
+
+    <h2><strong>{{=task.title}}</strong></h2>
+    {{=show_status(task.status)}} <br>
+
+    <br>
+
+    Created {{=prettydate(task.created_on)}} by {{=fullname(task.created_by)}}, <br>
+    Assigned to {{=fullname(task.assigned_to)}} <br>
+
+    <br>
+
+    {{=MARKMIN(task.description)}}
+
+</div>
+
