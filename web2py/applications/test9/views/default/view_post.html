@@ -1,0 +1,276 @@
+{{extend 'layout.html'}}
+
+<style>
+
+.btndel { color: #FF9966; }
+.btnedit { color: #33CCFF; }
+.btnview { color: #05CC99; }
+.btncomment { color: #00CC99; }
+
+.editTitleButton .btn .btn-sm .btnedit { visibility: hidden; }
+.editTitleButton:hover .btn .btn-sm .btnedit { visibility: visible; }
+
+.fa-thumbs-up {
+    color:#e1eaea;
+}
+
+.fa-thumbs-o-up {
+    color:#e1eaea;
+}
+
+.fa-thumbs-o-up:hover:before{
+    content: "\f164"
+}
+
+.fa-star {
+    color:#ffff00;
+}
+
+.fa-star-o {
+    color:#ffff00;
+}
+
+.fa-star-o:hover:before{
+    content: "\f005"
+}
+
+.span-vote a:link {
+    text-decoration: none;
+    font-size: 17px;
+}
+
+.span-vote a:visited {
+    text-decoration: none;
+}
+
+.span-vote a:hover {
+    text-decoration: none;
+}
+
+.span-vote a:active {
+    text-decoration: none;
+}
+
+</style>
+
+<div class="container">
+
+
+<!-- Everything a post is comprised of. -->
+<div class="row">
+      <div class="col s12 m12">
+            <div class="card blue-grey darken-1">
+                          {{if auth.user and auth.user.id==post.created_by: }}
+                            <div class="right-align">
+                            <a id="editPostLink" href="#editPost" class="material-icons">description</a>
+                            <a id="delPostLink" href="{{=URL('default', 'delete_post', args=post.id)}}" class="material-icons">delete</a>
+                            </div>
+                          {{pass}}
+                  <div class="card-content white-text">
+
+                      <span class="card-title">{{=post.title}}</span>
+
+                      </br>
+                      {{if not auth.user or (post.created_by != auth.user.id):}}
+                      <a href="{{=URL('default','list_posts_by_author', vars={'author':post.created_by})}}">
+                          <div class="chip">{{=post.created_by.first_name}} {{=post.created_by.last_name}}</div>
+                      </a>
+                      {{else:}}
+                          <div class="chip">{{=post.created_by.first_name}} {{=post.created_by.last_name}}</div>
+                      {{pass}}
+                      </br>
+                      <h6> <i>{{=prettydate(post.created_on)}}</i></h6>
+                      <p>{{=XML(post.body,sanitize=False)}}
+
+                      {{if post.image:}}
+                            <img src="{{=URL(r=request, f='download', args=post.image)}}" class="img-responsive" height="100px">
+                      {{pass}}
+
+                  </div>
+
+                  <!-- Load Facebook SDK for JavaScript -->
+                  <div class="row">
+                        <div class="col s12 m3">
+                              <div id="fb-root"></div>
+                              <script>
+                                    (function(d, s, id) {
+                                    var js, fjs = d.getElementsByTagName(s)[0];
+                                    if (d.getElementById(id)) return;
+                                    js = d.createElement(s); js.id = id;
+                                    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+                                    fjs.parentNode.insertBefore(js, fjs);
+                                    }(document, 'script', 'facebook-jssdk'));
+                              </script>
+
+                              <span id="spanVote" class="span-vote">
+                                    {{=vote_icon}}
+                              </span>
+
+                              <span id="spanFav" class="span-fav">
+                                    {{=fav_icon}}
+                              </span>
+
+                              <!-- Facebook share button code -->
+                              <div class="fb-share-button"
+                                    data-href="{{=post.id}}"
+                                    data-layout="button_count">
+                              </div>
+                        </div>
+                  </div>
+
+            </div>
+      </div>
+</div>
+</div>
+
+
+
+<!-- If you're the author of a post, you are allowed to see and use the edit/delete buttons -->
+{{if auth.user and auth.user.id==post.created_by: }}
+  <div class="row">
+       <div id="editPost" class="col s12">
+         {{=form_edit_post}}
+       </div>
+  </div>
+{{pass}}
+
+    <div class="container">
+        <div  id="comment-list" class="col s12 m12 l12">
+        </div>
+
+    </div>
+
+
+<script>
+
+    function show_edit_body() {
+        jQuery('#editPost').toggle();
+        //jQuery('#viewPost').hide();
+    }
+
+    function cancel_edit_body() {
+        jQuery('#editPost').hide();
+        jQuery('#viewPost').show();
+    }
+
+    $( "#editPostLink" ).click(function() {
+        show_edit_body();
+    });
+
+    function show_edit_title() {
+        jQuery('#editTitle').show();
+        jQuery('#viewTitle').hide();
+    }
+
+    function cancel_edit_title() {
+        jQuery('#editTitle').hide();
+        jQuery('#viewTitle').show();
+    }
+
+    $( "#editTitleLink" ).click(function() {
+        show_edit_title();
+    });
+
+    function cancel_edit_image() {
+        jQuery('#editImage').collapse('hide');
+    }
+
+    // Ajax function for our old voting system. DO NOT DELETE.
+    // For now, we are keeping this for future use. It has not
+    // been commented out because it is not interfering with
+    // any othe components.
+    function do_ajax_vote(t,direction){
+        var id = jQuery(t).closest('tr').attr('data-id');
+        jQuery.ajax({method: 'post',url:'{{=URL('comm_vote_callback')}}',
+                     data:{'id':id, 'direction': direction},
+                     success: function(data) {
+                        jQuery(t).closest('tr').find('.votes').html(data);
+                     } });
+
+    }
+
+    //  Ractive comments example was found at examples.ractivejs.org/comments
+    //  We heavily built upon it. Refer to documentation for more information
+    jQuery(function() {
+      jQuery('[data-direction=up]').click(function(){do_ajax_vote(this,'up');});
+      jQuery('[data-direction=down]').click(function(){do_ajax_vote(this,'down');});
+
+      window.app = {};
+      ajax('{{=URL("comments", "CommentsJson", args=post.id)}}', [], ':eval');
+
+      Ractive.DEBUG = false;
+      Ractive.load('{{=URL("comments", "Widget")}}').then(function(Widget){
+        app.commentList = new Widget({
+          el: '#comment-list',
+          data: function() {
+            return {
+              comments: app.commentData,
+              user: app.user,
+            };
+          }
+        });
+        app.commentList.on( 'newComment', function ( comment ) {
+          comment.comm.post = '{{=post.id}}';
+          jQuery.ajax({
+            type: 'POST',
+            url:'{{=URL("comments", "api/comm")}}',
+            data: {
+              body: comment.comm.body,
+              post: comment.comm.post,
+              created_by: comment.comm.created_by,
+            },
+          }).done(function(response){
+            var data = JSON.parse(response);
+            comment.comm.id = data.id;
+            // add to the list of comments
+            app.commentList.unshift('comments', comment);
+          });
+        });
+
+        app.commentList.on( 'saveEditComment', function ( comment ) {
+          var url = '{{=URL("comments", "api/comm")}}/' + comment.id;
+          jQuery.ajax({
+            type: 'PUT',
+            url: url,
+            data: {
+              body: comment.body,
+            },
+          });
+        });
+
+        app.commentList.on( 'deleteComment', function ( comment ) {
+          var url = '{{=URL("comments", "api/comm")}}/' + comment.id;
+          jQuery.ajax({
+            type: 'DELETE',
+            url: url,
+          });
+        });
+
+        app.commentList.on( 'fetchComments', function ( page ) {
+          console.log(page);
+          var url = '{{=URL("comments", "CommentsJson", args=post.id)}}' + '/' + page;
+          jQuery.get(url).done(function(response){
+            eval(response);
+            app.commentList.merge('comments', app.commentData);
+          });
+        });
+
+      });
+
+    });
+
+    $('select option[value=""]').remove();
+    //$('#post_uc').prepend('<option value="Choose" hidden >Choose One</option>');
+
+    // Disables the "Working..." message that appears during voting.
+    w2p_ajax_disable_with_message = "";
+
+    $(document).ready(function() {
+        $('select').material_select();
+        $('input#input_text, textarea#post_body').characterCounter();
+        $('#post_body').trigger('autoresize');
+        $('#post_body').css('height', '15rem');
+        jQuery('#editPost').hide();
+    });
+
+</script>
