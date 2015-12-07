@@ -1,0 +1,30 @@
+html {
+   font-family: 'Abel', sans-serif;
+ }
+
+body {
+   background-color: #f6f4f1;
+}
+nav .brand-logo {
+   position: absolute;
+   font-size: 140%;
+   color: #86a8a8;
+}
+
+
+nav ul a {
+   color: #86a8a8;
+   text-decoration: none;
+}
+
+
+
+
+
+.btn {
+   background-color: #86a8a8;
+}
+
+.btn:hover {
+   background-color: #86a8a8;
+}

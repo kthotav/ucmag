@@ -1,0 +1,244 @@
+{{extend 'layout.html'}}
+
+<style>
+
+.btndel { color: #FF9966; }
+.btnedit { color: #33CCFF; }
+.btnview { color: #05CC99; }
+.btncomment { color: #00CC99; }
+
+.editTitleButton .btn .btn-sm .btnedit { visibility: hidden; }
+.editTitleButton:hover .btn .btn-sm .btnedit { visibility: visible; }
+
+</style>
+
+<div class = "well">
+    <h2 id="viewTitle">{{=post.title}}
+    {{if auth.user and auth.user.id==post.created_by: }}
+        <span class="editTitleButton">
+        <a id="editTitleLink" href="#" class="btn btn-sm btnedit">
+                             <span data-toggle="Edit" class="glyphicon glyphicon-edit"></span> </a>
+        </span>
+    </h2>
+    <div id="editTitle" style="display:none;">
+    {{=form_edit_title}}
+    </div>
+    {{pass}}
+
+    <h4>Posted by <strong>{{=post.created_by.first_name}} {{=post.created_by.last_name}}</strong>
+
+    </h4>
+    <h5> <i>{{=prettydate(post.created_on)}}</i></h5>
+    {{if auth.user and auth.user.id==post.created_by: }}
+        <a id="editBodyLink" href="#" class="btn btn-sm btnedit">
+                             <span data-toggle="Edit" class="glyphicon glyphicon-edit"></span> </a>
+        <a id="delPostLink" href="{{=URL('default', 'delete_post', args=post.id)}}" class="btn btn-sm btndel">
+                             <span data-toggle="Delete" title="Delete Post" class="glyphicon glyphicon-remove-sign"></span> </a>
+
+    {{pass}}
+
+    <div id="viewBody">
+    {{=MARKMIN(post.body)}}
+    </div>
+
+    {{if auth.user and auth.user.id==post.created_by: }}
+    <div id="editBody" style="display:none;">
+    {{=form_edit_post}}
+    </div>
+    {{pass}}
+
+</div>
+
+<div class="row">
+    <div id="divImage" class="col-md-4">
+        {{if auth.user and auth.user.id==post.created_by: }}
+            <a href="#editImage" class="btn btn-sm btnedit" data-toggle="collapse" data-target="#editImage">
+                                 <span data-toggle="Edit" title="Add/Edit Image" class="glyphicon glyphicon-edit"></span> </a>
+        {{pass}}
+
+        {{ if post.image: }}
+            <a href="{{=URL('default', 'delete_post_image', args=post.id)}}" class="btn btn-sm btndel">
+                                 <span data-toggle="Delete" title="Remove Image" class="glyphicon glyphicon-remove-sign"></span> </a>
+
+            <a href="#viewImageLink" class="btn btn-sm btnview" data-toggle="modal" data-target="#viewPostImage">
+                <img src="{{=URL(r=request, f='download', args=post.image)}}" width="90%">
+            </a>
+
+            <!-- Modal for Viewing Post Image -->
+        <div class="modal fade" id="viewPostImage" role="dialog">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">×</button>
+            <h4 class="modal-title">{{=post.title}}</h4>
+          </div>
+          <div class="modal-body">
+              <img src="{{=URL(r=request, f='download', args=post.image)}}" class="img-responsive" >
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+            </div>
+          </div>
+        </div>
+
+        {{pass}}
+
+        {{if auth.user and auth.user.id==post.created_by: }}
+            <div id="editImage"  class="collapse">
+                {{=form_edit_image}}
+            </div>
+        {{pass}}
+
+    </div>
+
+    <div class="col-md-8">
+
+
+    {{for comment in comments:}}
+
+    {{if auth.user and comment.created_by==auth.user.id:}}
+        {{btn_class="btn disabled"
+          btn_attr="disabled"
+        }}
+    {{else:}}
+        {{btn_class="btn default"
+          btn_attr=""
+        }}
+    {{pass}}
+
+    <div class = "well row">
+
+        <div class="col-md-3">
+       <table>
+          <tr data-id="{{=comment.id}}">
+         <td><button data-direction="down" {{=btn_attr}} class="{{=btn_class}}">-</button></td>
+         <td><span class = "votes">{{=comment.votes}}</span></td>
+         <td><button data-direction="up" {{=btn_attr}} class="{{=btn_class}}">+</button></td>
+         <td>
+         </td>
+          </tr>
+       </table>
+    </div>
+
+        <div class="col-md-6">
+
+        {{=prettydate(comment.created_on)}} {{=author(comment.created_by)}} said: "{{=comment.body}}"
+
+            {{if auth.user and auth.user.id==comment.created_by: }}
+            <a href="#demo{{=comment.id}}" class="btn btn-sm btnedit" data-toggle="collapse" data-target="#demo{{=comment.id}}">
+            <span data-toggle="Edit" class="glyphicon glyphicon-edit"></span> </a>
+            <a href="{{=URL('default', 'delete_comment', args=comment.id)}}" class="btn btn-sm btndel">
+            <span data-toggle="Delete" title="Delete Comment" class="glyphicon glyphicon-remove-sign"></span> </a>
+            {{pass}}
+
+    </div>
+
+        <div class="col-md-3">
+
+                    {{ if comment.image:}}
+                    <div>
+                       <a href="#viewCommentImageLink" data-toggle="modal" data-target="#viewCommentImage">
+                       <img src="{{=URL(r=request, f='download', args=comment.image)}}" class='pull-right' width='35%'>
+                       </a>
+                    </div>
+                    <!-- Modal for Viewing Comment Image -->
+                    <div class="modal fade" id="viewCommentImage" role="dialog">
+                       <div class="modal-dialog modal-md">
+                          <div class="modal-content">
+                             <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">×</button>
+                             </div>
+                             <div class="modal-body">
+                                <img src="{{=URL(r=request, f='download', args=comment.image)}}" class="img-responsive" >
+                             </div>
+                             <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                             </div>
+                          </div>
+                       </div>
+                    </div>
+                    {{pass}}
+
+        </div>
+
+       <div>
+
+           {{form_edit_comment=SQLFORM(db.comm, comment.id, showid=False, submit_button='Update',
+        _class='form-horizontal form-inline').process(next='view_post/'+str(comment.post))
+        for label in form_edit_comment.elements('label'): label["_style"] = "display:none;"
+        }}
+           <div id="demo{{=comment.id}}" class="collapse">
+              {{=form_edit_comment}}
+           </div>
+       </div>
+
+    </div>
+    {{pass}}
+</div>
+
+    {{pass}}
+
+
+    {{if auth.user: }}
+        <a id="addCommentLink" href="#addComment" class="btn btn-sm btncomment" data-toggle="collapse" data-target="#addComment">
+                             <span data-toggle="Add comment" class="glyphicon glyphicon-comment"></span> </a>
+        <div id="addComment" class="collapse">
+            {{=form_comments}}
+        </div>
+    {{pass}}
+    {{=no_auth_link}}
+    </div>
+
+</div>
+
+<script>
+
+    function show_edit_body() {
+        jQuery('#editBody').show();
+        jQuery('#viewBody').hide();
+    }
+
+    function cancel_edit_body() {
+        jQuery('#editBody').hide();
+        jQuery('#viewBody').show();
+    }
+
+    $( "#editBodyLink" ).click(function() {
+        show_edit_body();
+    });
+
+    function show_edit_title() {
+        jQuery('#editTitle').show();
+        jQuery('#viewTitle').hide();
+    }
+
+    function cancel_edit_title() {
+        jQuery('#editTitle').hide();
+        jQuery('#viewTitle').show();
+    }
+
+    $( "#editTitleLink" ).click(function() {
+        show_edit_title();
+    });
+
+    function cancel_edit_image() {
+        jQuery('#editImage').collapse('hide');
+    }
+
+
+    function do_ajax_vote(t,direction){
+        var id = jQuery(t).closest('tr').attr('data-id');
+        jQuery.ajax({method: 'post',url:'{{=URL('comm_vote_callback')}}',
+                     data:{'id':id, 'direction': direction},
+                     success: function(data) {
+                        jQuery(t).closest('tr').find('.votes').html(data);
+                     } });
+
+    }
+
+    jQuery(function() {
+       jQuery('[data-direction=up]').click(function(){do_ajax_vote(this,'up');});
+       jQuery('[data-direction=down]').click(function(){do_ajax_vote(this,'down');});
+    });
+</script>
