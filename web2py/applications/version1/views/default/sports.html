@@ -1,0 +1,17 @@
+{{extend 'layout.html'}}
+
+<h2>Previous Sports Posts</h2>
+
+<table class="table">
+    {{for row in rows:}}
+    <tr>
+        <td><a href="{{=URL('show_s',args=row.id)}}">{{=row.title}}</a></td>
+        <td>{{=row.created_on}}</td>
+    </tr>
+    {{pass}}
+</table>
+
+<h2>Welcome to Sports Blogs!</h2>
+
+{{=form}}
+

@@ -1,0 +1,14 @@
+{{extend 'layout.html'}}
+
+<h2>{{=post_s.title}}</h2>
+<i>Posted on {{=post_s.created_on}} by {{=post_s.created_by.first_name}} {{=post_s.created_by.last_name}}</i>
+
+{{=MARKMIN(post_s.body)}}
+
+{{for comments in comment_s:}}
+      <div class="well">
+          {{=comments.created_by.first_name}} {{=comments.created_by.last_name}}
+          on {{=comments.created_on}} says: <i>{{=MARKMIN(comments.body)}}</i>
+      </div>
+{{pass}}
+{{=form}}
