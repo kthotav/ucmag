@@ -2109,3 +2109,17 @@
 127.0.0.1, 2015-12-07 11:35:44, GET, /version1/static/images/facebook.png, HTTP/1.1, 200, 0.002098
 127.0.0.1, 2015-12-07 11:35:44, GET, /version1/static/images/gplus-32.png, HTTP/1.1, 200, 0.001477
 127.0.0.1, 2015-12-07 11:35:44, GET, /version1/static/images/favicon.ico, HTTP/1.1, 200, 0.001679
+127.0.0.1, 2015-12-07 11:36:20, GET, /admin/default/site, HTTP/1.1, 200, 0.046393
+127.0.0.1, 2015-12-07 11:36:21, GET, /favicon.ico, HTTP/1.1, 400, 0.000203
+127.0.0.1, 2015-12-07 11:37:06, GET, /admin/default/design/version1, HTTP/1.1, 200, 0.155161
+127.0.0.1, 2015-12-07 11:37:07, GET, /favicon.ico, HTTP/1.1, 400, 0.000205
+127.0.0.1, 2015-12-07 11:37:11, GET, /admin/default/site, HTTP/1.1, 200, 0.067796
+127.0.0.1, 2015-12-07 11:37:11, GET, /favicon.ico, HTTP/1.1, 400, 0.000371
+127.0.0.1, 2015-12-07 11:37:26, GET, /admin/default/uninstall/version1, HTTP/1.1, 200, 0.066132
+127.0.0.1, 2015-12-07 11:37:26, GET, /favicon.ico, HTTP/1.1, 400, 0.000207
+127.0.0.1, 2015-12-07 11:37:28, POST, /admin/default/uninstall/version1, HTTP/1.1, 303, 0.230669
+127.0.0.1, 2015-12-07 11:37:28, GET, /admin/default/site, HTTP/1.1, 200, 0.041996
+127.0.0.1, 2015-12-07 11:37:28, GET, /favicon.ico, HTTP/1.1, 400, 0.000205
+127.0.0.1, 2015-12-07 11:38:08, POST, /admin/default/site, HTTP/1.1, 303, 0.222299
+127.0.0.1, 2015-12-07 11:38:08, GET, /admin/default/site, HTTP/1.1, 200, 0.047587
+127.0.0.1, 2015-12-07 11:38:08, GET, /favicon.ico, HTTP/1.1, 400, 0.000204
