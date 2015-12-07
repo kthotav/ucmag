@@ -1,0 +1,155 @@
+{{extend 'layout.html'}}
+
+<style>
+
+.fa-trash:hover:before{
+    content: "\f014"
+}
+
+</style>
+
+<!-- If the user requests to list posts by votes, -->
+{{if request.function== 'list_posts_by_votes':}}
+
+    <!-- display the name of the category -->
+    <h1>Welcome to {{=category.name.title()}}!</h1>
+
+    <!-- Allow for there to be a button to enable the user to create a post. -->
+    <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#formNewPost">
+          <span class="glyphicon glyphicon-plus"></span> New Post
+    </button>
+
+    <!-- Allow for there to be a button to enable the user to list posts by time of creation. -->
+    {{=A('Sort by Date', _class='btn', _href=URL('list_posts_by_datetime', args=category.name))}}
+
+<!-- If the user requests to list posts by votes, -->
+{{elif request.function=='list_posts_by_datetime':}}
+    <h1>{{=category.name.title()}}</h1>
+
+    <!-- do the same thing except have the page have a button to list posts by the highest number of votes. -->
+    <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#formNewPost">
+          <span class="glyphicon glyphicon-plus"></span> New Post
+    </button>
+    {{=A('Sort by Votes', _class='btn', _href=URL('list_posts_by_votes', args=category.name))}}
+
+<!-- This branch is not taken -->
+{{else:}}
+    <h1>{{=category.name.title()}}</h1>
+    <h1>{{=author(user_id)}}</h1>
+{{pass}}
+
+          <!-- Modal for Viewing Post Image -->
+          <div class="modal fade" id="formNewPost" role="dialog">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal">×</button>
+                  <h4 class="modal-title">{{=category.name.title()}} /<small> New Post</small></h4>
+                </div>
+                <div class="modal-body">
+                    {{=form_new_post}}
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+<!-- Dropdown Trigger for UC Filtering -->
+<div style="float: right;">
+
+  Filter By: <a id="buttonUC" class='dropdown-button btn' href='#' data-activates='dropdownUC'>{{=request.vars.uc or '[All]'}}</a>
+
+  <!-- Dropdown Structure -->
+  <ul id='dropdownUC' class='dropdown-content'>
+  {{for uc in ['[All]']+UCS:}}
+    <li><a href="{{=URL(args=request.args, vars={'uc':uc})}}">{{=uc}}</a></li>
+  {{pass}}
+  </ul>
+</div>
+
+
+<div class="row">
+{{for post in rows:}}
+        {{
+          article_body = post.body
+          article_body = article_body[:400]
+        }}
+  <div class="col l6 m6 s6">
+    <div class="card small">
+      <div class="card-content">
+        <span class="card-title"><h5>{{=post.title}}</h5></span>
+          <p> 
+           <h6>{{=post.title}}</h6>
+           <div class="col s2">
+            {{if post.image:}}
+                  <img src="{{=URL(r=request, f='download', args=post.image)}}" class="img-responsive" style="padding-top: 5px">
+            {{else:}}
+                  <img src="{{=URL('static', 'images/uc-mag-default.png')}}" class="img-responsive" style="padding-top: 5px">
+            {{pass}}
+           </div>
+          </p> 
+          <p>
+             {{=article_body}}
+          </p>
+      </div>
+      <div class="card-action">
+        {{=A('Read More', _href=URL('view_post', args=post.id))}}
+        {{if auth.user and post.created_by==auth.user.id:}}
+          <span class="spanTrash pull-right">
+               <a href="{{=URL('default', 'delete_post', args=post.id)}}" class="fa fa-trash fa-lg"></a>
+          </span>
+        {{pass}}
+      </div>
+    </div>
+  </div>
+  {{pass}}
+</div>
+
+
+
+
+{{if page>0:}}
+        {{=A('previous', _class='btn', _href=URL(args=(category.name,page-1)))}}
+{{pass}}
+
+{{if len(rows)>=10:}}
+        {{=A('next', _class='btn', _href=URL(args=(category.name, page+1)))}}
+{{pass}}
+
+
+
+<script>
+
+    $('select option[value=""]').remove();
+    $('#post_uc').prepend('<option value="Choose" selected hidden >Choose One</option>');
+
+/*
+    function do_ajax_vote(t,direction){
+        var id = jQuery(t).closest('tr').attr('data-id');
+        jQuery.ajax({method: 'post',url:'{{=URL('vote_callback')}}',
+                     data:{'id':id, 'direction': direction},
+                     success: function(data) {
+                        jQuery(t).closest('tr').find('.votes').html(data);
+                     } });
+
+    }
+
+    jQuery(function() {
+       jQuery('[data-direction=up]').click(function(){do_ajax_vote(this,'up');});
+       jQuery('[data-direction=down]').click(function(){do_ajax_vote(this,'down');});
+    });
+
+    $('.dropdown-button').dropdown({
+      inDuration: 300,
+      outDuration: 225,
+      constrain_width: false, // Does not change width of dropdown to that of the activator
+      hover: true, // Activate on hover
+      gutter: 0, // Spacing from edge
+      belowOrigin: false, // Displays dropdown below the button
+      alignment: 'left' // Displays dropdown with edge aligned to the left of button
+      }
+    );
+*/
+</script> 

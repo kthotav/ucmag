@@ -1,0 +1,182 @@
+{{extend 'layout.html'}}
+
+
+
+<div class="slider">
+    <ul class="slides">
+      <li>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/4/4b/Wellesley_College_Tower_Court.jpg"> <!-- random image -->
+        <div class="caption center-align">
+          <h3>Welcome to UC Magazine!</h3>
+          <h5 class="light grey-text text-lighten-3">Create your stories!</h5>
+        </div>
+      </li>
+      <li>
+        <img src="https://www.northeastern.edu/guidelines/imagedownloads/studentlife/Student_Life_HighRes/Student_Life_HighRes_002.jpg"> <!-- random image -->
+        <div class="caption center-align">
+          <h3>Venture forth into Student Life!</h3>
+          <h5 class="light grey-text text-lighten-3">Stay updated on student-related news</h5>
+        </div>
+      </li>
+      <li>
+        <img src="http://ucdavis.edu/local_resources/images/calendar/mondavi-center-building-uc-davis.jpg"> <!-- random image -->
+        <div class="caption left-align">
+          <h3>Discover and explore UC campuses!</h3>
+          <h5 class="light grey-text text-lighten-3">Get updated on the latest events</h5>
+        </div>
+      </li>
+      <li>
+        <img src="http://www.bruinrugby.com/wp-content/uploads/2012/09/UC-Davis-Mar-2011-001.jpg"> <!-- random image -->
+        <div class="caption right-align">
+          <h3>Keep up with your favorite sports team!</h3>
+          <h5 class="light grey-text text-lighten-3">Stay updated with sports </h5>
+        </div>
+      </li>
+      <li>
+        <img src="https://d9hblenkye35w.cloudfront.net/media/thumbnail/ext/xl/http%253A%252F%252Ffarm1.staticflickr.com%252F130%252F376152628_249e3630c0_o.jpg"> <!-- random image -->
+        <div class="caption center-align">
+          <h3>Find textbooks!</h3>
+          <h5 class="light grey-text text-lighten-3">Find textbooks for your classes</h5>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+<script>
+$(document).ready(function(){
+      $('.slider').slider({full_width: true});
+    });
+
+    // Pause slider
+$('.slider').slider('pause');
+// Start slider
+$('.slider').slider('start');
+// Next slide
+$('.slider').slider('next');
+// Previous slide
+$('.slider').slider('prev');
+</script>
+
+<!--
+{{for category in rows:}}
+
+<div class = "well">
+    {{=A(category.name.title(), _class="btn btn-large btn-primary", _style="width:50%", _href=URL('list_posts_by_votes', args=category.name))}}
+</div>
+
+{{pass}}
+-->
+
+<!---------------------------------------- FOOTER CONTENT -------------------------------------->
+<script>
+    // http://materializecss.com/modals.html#!
+    $(document).ready(function(){
+    // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+    $('.modal-trigger').leanModal();
+    });
+</script>
+
+<script>
+    // http://materializecss.com/modals.html#!
+    $(document).ready(function(){
+    // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+    $('.modal1-trigger').leanModal();
+    });
+</script>
+
+<script>
+    // http://materializecss.com/modals.html#!
+    $(document).ready(function(){
+    // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+    $('.modal2-trigger').leanModal();
+    });
+</script>
+
+
+<!-- http://materializecss.com/footer.html -->
+
+<footer class="page-footer">
+          <div class="container">
+            <div class="row">
+              <div class="col l6 s12">
+
+                <!------------------------------ Left Side of Footer ------------------------------>
+                <h5 class="white-text">UC Magazine</h5>
+                <p class="grey-text text-lighten-4">Please visit our useful links for more information.</p>
+                <br>
+
+                <p><a href="https://www.facebook.com/UCMagazines/" target="_blank"> <img border="0" src={{=URL('static', 'images/facebook1.png')}}></a>
+                <a href="https://twitter.com/UCMagazines/" target="_blank"> <img border="0" src={{=URL('static', 'images/twitter1.png')}}></a>
+                <a href="https://plus.google.com/u/0/110636705593484622040" target="_blank"> <img border="0" src={{=URL('static', 'images/googleplus.png')}}></a>
+                </p>
+
+
+              </div>
+              <div class="col l4 offset-l2 s12">
+                <h5 class="white-text">Links</h5>
+                <ul>
+
+                  <li> <!---------------------------------- About ---------------------------------->
+
+                    <!-- Modal Trigger http://materializecss.com/modals.html#! -->
+                    <a class="grey-text text-lighten-3 modal-trigger tooltipped" data-delay="50" data-position="right" data-tooltip="What is our site about?" href="#modal1">About</a>
+
+                    <!-- Modal Structure http://materializecss.com/modals.html#! -->
+                    <div id="modal1" class="modal">
+                      <div class="modal-content">
+                        <h4>About</h4>
+                        <p>UC Magazine is a forum-based platform for UC students from all UC campuses to get together and share their university-related stories. It is a platform to share stories about student life, campus events, and sports, as well as an easy way for students to share information about textbooks.</p>
+                        <p>The inception of this project came from the realization that there wasn't really a well-established way for students of different UC campuses to communicate with one another. The campus lives amongst UCs are largely segregated. UC Magazine seeks to build a bridge across these barriers to allow students the outlet that they need to learn about what's going on in various UC campuses.</p>
+                      </div>
+                      <div class="modal-footer">
+                        <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Close</a>
+                      </div>
+                    </div>
+                  </li>
+
+                  <li><!------------------------------- Privacy Policy ------------------------------->
+
+                      <!-- Modal Trigger http://materializecss.com/modals.html#! -->
+                      <a class="grey-text text-lighten-3 modal1-trigger tooltipped" data-delay="50" data-position="right" data-tooltip="What do we do with your information?" href="#modal11">Privacy</a>
+
+                      <!-- Modal Structure http://materializecss.com/modals.html#! -->
+                      <div id="modal11" class="modal modal-fixed-footer">
+                        <div class="modal-content">
+                          <h4>Privacy</h4>
+                          <p>When you choose to use UC Magazine, you are trusting us with your information. This Privacy section is meant to inform you on what data we collect, why we collect it, and what we do with it. </p>
+                          <p>There are various ways you can use our service: You can use it to share information, communicate with other people, or create new stories. Users will be able to identify you based upon your name, but we do not share any of your sensitive credentials with any outside sources. The only information that is collected is the one you give us. Information such as user credentials during signing up for an account is only collected to grant users the right to post content in our application and to identify these users.</p>
+                          <p>The only time your information will be looked at by us is you violate our Terms of Services. Please see our Terms of Services section for more information.</p>
+                        </div>
+                        <div class="modal-footer">
+                          <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">Close</a>
+                        </div>
+                      </div>
+                  </li>
+
+
+                  <li> <!-------------------------- Terms of Service Policy -------------------------->
+
+                    <!-- Modal Trigger http://materializecss.com/modals.html#! -->
+                    <a class="grey-text text-lighten-3 modal2-trigger tooltipped" data-delay="50" data-position="right" data-tooltip="What is our code of conduct?" href="#modal12">Terms of Service</a>
+
+                    <!-- Modal Structure http://materializecss.com/modals.html#! -->
+                    <div id="modal12" class="modal modal-fixed-footer">
+                      <div class="modal-content">
+                        <h4>Terms of Service</h4>
+                        <p>By using our service, you also agree with our terms of service. I need to add some bullshit here.</p>
+                      </div>
+                      <div class="modal-footer">
+                        <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Close</a>
+                      </div>
+                    </div>
+
+                  </li>
+                  <li>
+                      <a class="grey-text text-lighten-3 tooltipped" data-delay="50" data-position="right" data-tooltip="Report an issue/bug/concern." href="tasks">Report an Issue</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+</footer>
+
