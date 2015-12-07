@@ -1,0 +1,225 @@
+{{extend 'layout.html'}}
+
+<style>
+
+.fa-trash:hover:before{
+    content: "\f014"
+}
+
+</style>
+
+<!-- Modal structure for the delete confirmation window -->
+<script>
+    // http://materializecss.com/modals.html#!
+    $(document).ready(function(){
+    // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+      $('.modaldel-trigger').leanModal({
+      dismissible: true, // Modal can be dismissed by clicking outside of the modal
+      opacity: .2, // Opacity of modal background
+      in_duration: 150, // Transition in duration
+      out_duration: 100, // Transition out duration
+    }
+  );})
+
+</script>
+
+<!-- Display name of category -->
+<h1>Welcome to {{=category.name.title()}}!</h1>
+
+<!-- Modal Trigger: Button for New Post -->
+<a class="waves-effect waves-light btn modal-trigger" href="#modal1">New Post</a>
+
+<!-- Buttons for list_posts_by... -->
+
+<!-- If the user the user is on the list_posts_by_votes page, then... -->
+{{if request.function == 'list_posts_by_votes':}}
+
+    <!-- allow for there to be a button to enable the user to list posts by time of creation. -->
+    {{=A('Sort by Date', _class='waves-effect waves-light btn', _href=URL('list_posts_by_datetime', args=category.name))}}
+
+<!-- If the user the user is on the list_posts_by_datetime page, then... -->
+{{elif request.function=='list_posts_by_datetime':}}
+
+    <!-- do the same thing except have the page have a button to list posts by the highest number of votes. -->
+    {{=A('Sort by Votes', _class='waves-effect waves-light btn', _href=URL('list_posts_by_votes', args=category.name))}}
+
+
+<!-- This branch is not taken -->
+{{else:}}
+    <h1>{{=category.name.title()}}</h1>
+    <h1>{{=author(user_id)}}</h1>
+{{pass}}
+
+<!-- Modal Structure -->
+<div id="modal1" class="modal">
+<div class="modal-content">
+<h4>New Post / {{=category.name.title()}}</h4>
+{{=form_new_post}}
+
+</div>
+<div class="modal-footer">
+<a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+</div>
+</div>
+          <!-- Modal for Viewing Post Image -->
+          <div class="modal fade" id="formNewPost" role="dialog">
+            <div class="modal-dialog modal-lg">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal">×</button>
+                  <h4 class="modal-title">{{=category.name.title()}} /<small> New Post</small></h4>
+                </div>
+                <div class="modal-body">
+                    {{=form_new_post}}
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+<!-- Dropdown Trigger for UC Filtering -->
+<div style="float: right;">
+
+  Filter By: <a id="buttonUC" class='dropdown-button btn' href='#' data-activates='dropdownUC'>{{=request.vars.uc or '[All]'}}</a>
+
+  <!-- Dropdown Structure -->
+  <ul id='dropdownUC' class='dropdown-content'>
+  {{for uc in ['[All]']+UCS:}}
+    <li><a href="{{=URL(args=request.args, vars={'uc':uc})}}">{{=uc}}</a></li>
+  {{pass}}
+  </ul>
+
+  <!-- Add vertical space between Filter By dropdown menu and posts. -->
+  <br>
+  <br>
+  <br>
+
+</div>
+
+<!-- Make vertical space between the posts and the +New Post, SORT BY VOTES/DATE, and Filter By buttons. -->
+<br>
+<br>
+<br>
+
+
+<!-- List every post using the Image Card component from MaterializeCSS. See documentation for more information
+     http://materializecss.com/cards.html -->
+<div class="row">
+{{for post in rows:}}
+        {{
+          article_body = post.body
+          article_body = article_body[:140]
+        }}
+
+        <div class="col s12 m3">
+
+          <div class="card hoverable medium transparent">
+            <div class="card-image">
+            {{if post.image:}}
+                  <img src="{{=URL(r=request, f='download', args=post.image)}}" class="img-responsive" style="padding-top: 5px; opacity: 0.3">
+            {{else:}}
+                  <img src="{{=URL('static', 'images/uc-mag-default.png')}}" class="img-responsive" style="padding-top: 5px; opacity: 0.3">
+            {{pass}}
+              <span class="card-title black-text">{{=post.title}}</span>
+            </div>
+            <div class="card-content">
+              <p>{{=article_body}}</p>
+
+              {{=A('Read More', _href=URL('view_post', args=post.id))}}
+
+              <!-- Trash can logic and icon -->
+              {{if auth.user and post.created_by==auth.user.id:}}
+
+                    <div class="right-align">
+
+
+
+                        <!-- Modal Trigger icon for trash can; http://materializecss.com/modals.html#! -->
+                        <a class="modaldel-trigger tooltipped" data-delay="50" data-position="left" data-tooltip="Delete Post" href="#modaldel"><div class="material-icons">delete</div></a>
+
+                        <!-- Modal Structure for trash can; http://materializecss.com/modals.html#! -->
+                        <div id="modaldel" class="modal">
+                          <div class="modal-content">
+                            <center><h4>Are you sure you want to delete this post?</h4></center>
+                          </div>
+                          <div class="modal-footer">
+                            <a href="" class=" modal-action modal-close waves-effect waves-green btn-flat">No</a>
+                            <a href="{{=URL('default', 'delete_post', args=post.id)}}" class=" modal-action modal-close waves-effect waves-green btn-flat">Yes</a>
+                          </div>
+                        </div>
+
+                    </div>
+              {{pass}}
+            </div>
+          </div>
+        </div>
+  {{pass}}
+</div>
+
+<!-- Pagination for posts. Display 12 posts per page. -->
+<!-- Massimo shows how to do this in his Week 1 tutorial -->
+{{if page>0:}}
+        {{=A('previous', _class='waves-effect waves-light btn left', _href=URL(args=(category.name,page-1)))}}
+{{pass}}
+
+{{if len(rows)>=10:}}
+        {{=A('next', _class='waves-effect waves-light btn right', _href=URL(args=(category.name, page+1)))}}
+{{pass}}
+
+
+<!-- Make vertical space between Next/Previous buttons and the footer. -->
+<br>
+<br>
+<br>
+<br>
+
+<!-- Old voting logic. This script isn't being used (aside from the first two lines)
+     We are still keeping this for the future if we decide to take the project beyond
+     this class. It is a useful component that we do not wish to delete.
+-->
+<script>
+
+$(document).ready(function(){
+ // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+ $('.modal-trigger').leanModal();
+});
+
+
+  $(document).ready(function() {
+    $('select').material_select();
+  });
+
+
+    $('select option[value=""]').remove();
+    $('#post_uc').prepend('<option value="Choose" selected hidden >Choose One</option>');
+
+/*
+    function do_ajax_vote(t,direction){
+        var id = jQuery(t).closest('tr').attr('data-id');
+        jQuery.ajax({method: 'post',url:'{{=URL('vote_callback')}}',
+                     data:{'id':id, 'direction': direction},
+                     success: function(data) {
+                        jQuery(t).closest('tr').find('.votes').html(data);
+                     } });
+
+    }
+
+    jQuery(function() {
+       jQuery('[data-direction=up]').click(function(){do_ajax_vote(this,'up');});
+       jQuery('[data-direction=down]').click(function(){do_ajax_vote(this,'down');});
+    });
+
+    $('.dropdown-button').dropdown({
+      inDuration: 300,
+      outDuration: 225,
+      constrain_width: false, // Does not change width of dropdown to that of the activator
+      hover: true, // Activate on hover
+      gutter: 0, // Spacing from edge
+      belowOrigin: false, // Displays dropdown below the button
+      alignment: 'left' // Displays dropdown with edge aligned to the left of button
+      }
+    );
+*/
+</script>

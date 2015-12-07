@@ -1,0 +1,240 @@
+{{extend 'layout.html'}}
+
+<style>
+
+.btndel { color: #FF9966; }
+.btnedit { color: #33CCFF; }
+.btnview { color: #05CC99; }
+.btncomment { color: #00CC99; }
+
+
+
+.fa-thumbs-o-up:hover:before{
+    content: "\f164"
+}
+
+.span-vote a:link {
+    text-decoration: none;
+    font-size: 17px;
+}
+
+.span-vote a:visited {
+    text-decoration: none;
+}
+
+.span-vote a:hover {
+    text-decoration: none;
+}
+
+.span-vote a:active {
+    text-decoration: none;
+}
+
+</style>
+
+
+<!-- Post Formatting -------------------------------->
+<div class="row">
+    <div class="col s12 m12">
+      <div class="card blue-grey darken-1">
+        <div class="card-content white-text">
+
+            <h2 class="card-title" id="viewTitle">{{=post.title}}
+              {{if auth.user and auth.user.id==post.created_by: }}
+              <span class="editTitleButton">
+                <a id="editTitleLink" href="#" class="btnedit">
+                  <span data-toggle="Edit" class="material-icon">mode edit</span>
+                </a>
+              </span>
+            </h2>
+
+           <div id="editTitle" style="display:none;">
+              {{=form_edit_title}}
+           </div>
+           <h6>Posted by {{=post.created_by.first_name}} {{=post.created_by.last_name}}</h6>
+          <h6><i>{{=prettydate(post.created_on)}}</i></h6>
+
+
+              {{pass}}
+
+
+
+              <!-- If you're the author of a post, you are allowed to see and use the edit/delete buttons -->
+               {{if auth.user and auth.user.id==post.created_by: }}
+                   <a id="editBodyLink" href="#" class="btnedit">
+                                        <span data-toggle="Edit" class="material-icons">mode edit</span> </a>
+                   <a id="delPostLink" href="{{=URL('default', 'delete_post', args=post.id)}}" class="btndel">
+                                        <span data-toggle="Delete" title="Delete Post" class="material-icons">delete</span> </a>
+
+               {{pass}}
+
+               <!-- Post Content -->
+               <div id="viewBody">
+                   {{=MARKMIN(post.body)}}
+               </div>
+
+               <!-- If you are the author of a post, you are allowed to access the edit form. -->
+              {{if auth.user and auth.user.id==post.created_by: }}
+                  <div id="editBody" style="display:none;">
+                      {{=form_edit_post}}
+                  </div>
+              {{pass}}
+
+
+        </div>
+
+        <!-- Load Facebook SDK for JavaScript -->
+        <div id="fb-root"></div>
+        <script>(function(d, s, id) {
+          var js, fjs = d.getElementsByTagName(s)[0];
+          if (d.getElementById(id)) return;
+          js = d.createElement(s); js.id = id;
+          js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+          fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));</script>
+
+        <!-- Voting logic defined in default.py. This is just the icon. -->
+        <span id="spanVote" class="span-vote">
+            {{=vote_icon}}
+        </span>
+
+        <!-- Facebook share button code -->
+        <div class="fb-share-button"
+           data-href="{{=post.id}}"
+           data-layout="button_count">
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="row">
+      <div class="col s12 m12">
+        <div class="card">
+          <div class="card-content white-text">
+            <div id="comment-list" class="col-md-8">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+
+<script>
+
+    function show_edit_body() {
+        jQuery('#editBody').show();
+        jQuery('#viewBody').hide();
+    }
+
+    function cancel_edit_body() {
+        jQuery('#editBody').hide();
+        jQuery('#viewBody').show();
+    }
+
+    $( "#editBodyLink" ).click(function() {
+        show_edit_body();
+    });
+
+    function show_edit_title() {
+        jQuery('#editTitle').show();
+        jQuery('#viewTitle').hide();
+    }
+
+    function cancel_edit_title() {
+        jQuery('#editTitle').hide();
+        jQuery('#viewTitle').show();
+    }
+
+    $( "#editTitleLink" ).click(function() {
+        show_edit_title();
+    });
+
+    function cancel_edit_image() {
+        jQuery('#editImage').collapse('hide');
+    }
+
+    // Ajax function for our old voting system. DO NOT DELETE.
+    // For now, we are keeping this for future use. It has not
+    // been commented out because it is not interfering with
+    // any othe components.
+    function do_ajax_vote(t,direction){
+        var id = jQuery(t).closest('tr').attr('data-id');
+        jQuery.ajax({method: 'post',url:'{{=URL('comm_vote_callback')}}',
+                     data:{'id':id, 'direction': direction},
+                     success: function(data) {
+                        jQuery(t).closest('tr').find('.votes').html(data);
+                     } });
+
+    }
+
+    //  Ractive comments example was found at examples.ractivejs.org/comments
+    //  We heavily built upon it. Refer to documentation for more information
+    jQuery(function() {
+      jQuery('[data-direction=up]').click(function(){do_ajax_vote(this,'up');});
+      jQuery('[data-direction=down]').click(function(){do_ajax_vote(this,'down');});
+
+      window.app = {};
+      ajax('{{=URL("comments", "CommentsJson", args=post.id)}}', [], ':eval');
+
+      Ractive.DEBUG = false;
+      Ractive.load('{{=URL("comments", "Widget")}}').then(function(Widget){
+        app.commentList = new Widget({
+          el: '#comment-list',
+          data: function() {
+            return {
+              comments: app.commentData,
+              user: app.user,
+            };
+          }
+        });
+        app.commentList.on( 'newComment', function ( comment ) {
+          comment.comm.post = '{{=post.id}}';
+          jQuery.ajax({
+            type: 'POST',
+            url:'{{=URL("comments", "api/comm")}}',
+            data: {
+              body: comment.comm.body,
+              post: comment.comm.post,
+              created_by: comment.comm.created_by,
+            },
+          }).done(function(response){
+            var data = JSON.parse(response);
+            comment.comm.id = data.id;
+            // add to the list of comments
+            app.commentList.push('comments', comment);
+          });
+        });
+
+        app.commentList.on( 'saveEditComment', function ( comment ) {
+          var url = '{{=URL("comments", "api/comm")}}/' + comment.id;
+          jQuery.ajax({
+            type: 'PUT',
+            url: url,
+            data: {
+              body: comment.body,
+            },
+          });
+        });
+
+        app.commentList.on( 'deleteComment', function ( comment ) {
+          var url = '{{=URL("comments", "api/comm")}}/' + comment.id;
+          jQuery.ajax({
+            type: 'DELETE',
+            url: url,
+          });
+        });
+      });
+
+    });
+
+    $('select option[value=""]').remove();
+    $('#post_uc').prepend('<option value="Choose" hidden >Choose One</option>');
+
+    // Disables the "Working..." message that appears during voting.
+    w2p_ajax_disable_with_message = "";
+
+</script>

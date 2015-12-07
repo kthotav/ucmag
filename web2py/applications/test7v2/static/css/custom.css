@@ -1,0 +1,16 @@
+html {
+   font-family: GillSans, Calibri, Trebuchet, sans-serif;
+ }
+
+body {
+   background-color: #eeeeee;
+}
+nav .brand-logo {
+   position: absolute;
+   font-size: 140%;
+}
+
+
+nav ul a {
+   font-size: 80%;
+}
