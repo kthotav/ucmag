@@ -1,0 +1,206 @@
+{{#if user.authorized}}
+  <form>
+    <!-- comment body -->
+    <textarea decorator='counter:2000' value='{{text}}' class="materialize-textarea" placeholder='Say something...' required></textarea>
+
+    <!-- 'submit comment' button -->
+    <input on-click='post(event, text)' {{enabled(text) ? '' : 'disabled'}} type='submit' value='Submit comment' style="background-color:#86a8a8;">
+  </form>
+{{else}}
+  <a class="btn" style="background-color:#86a8a8;" href="{%=URL('default', 'user/login')%}">login to comment</a>
+{{/if}}
+
+{{#comments:i}}
+  <div class='comment-block' intro='slide'>
+    <span class='comment-author'>
+      {{auth_user.first_name}} {{auth_user.last_name}}<br>
+      <i><small>{{fromNow(comm.created_on)}}</small></i>
+    </span>
+
+    {{#with comm}}
+    <div class='comment-text'>
+      {{#if editing}}
+      <textarea class="materialize-textarea" value="{{body}}">{{body}}</textarea>
+      {{else}}
+        {{{ body }}}
+      {{/if}}
+    </div>
+    {{#if created_by == user.id}}
+
+
+    {{#unless editing}}
+    <a on-click="delete(event, i)" href="#" class="right">
+      <i title="Delete Comment" class="material-icons" style="color:#506464;">clear</i>
+    </a>
+
+    {{/unless}}
+    <a on-click="edit(event, i)" href="#" class="right">
+      <i class="material-icons" style="color:#aac2c2;">{{editing ? 'done' : 'mode_edit'}}</i>
+    </a>
+    {{/if}}
+    {{/with}}
+  </div>
+{{/comments}}
+
+<ul class="pagination">
+  <li>
+  <button {{page <= 0 ? 'disabled' : ''}} on-click="prev(event)" class="waves-effect btn btn-sm {{page <= 0 ? 'disabled' : ''}}" style="background-color:#86a8a8;">
+    <i class="material-icons">chevron_left</i>
+    </button>
+  </li>
+  <li>
+    <button {{comments.length < 10 ? 'disabled' : ''}} on-click="next(event)" class="waves-effect btn btn-sm {{comments.length < 10 ? 'disabled' : ''}}" style="background-color:#86a8a8;">
+      <i class="material-icons">chevron_right</i>
+    </button>
+  </li>
+</ul>
+
+<style>
+  .comment-block {
+    position: relative;
+    padding: 0 0 0 9em;
+    margin: 0 0 2em 0;
+
+  }
+
+  .comment-author {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 9em;
+    background-color: #eee;
+    padding: 0.5em;
+
+  }
+
+  .comment-text {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-top: 1px solid #eee;
+    padding: 0.5em 0.5em 0.5em 1em;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+  }
+
+  .comment-text p:last-child {
+    margin: 0;
+  }
+  form {
+    position: relative;
+    padding: 0 0 0 9em;
+  }
+
+  textarea {
+    font-size: inherit;
+    font-family: inherit;
+    width: 100%;
+    height: 5em;
+    padding: 0.5em;
+    border: 1px solid #eee;
+    box-shadow: inset 1px 1px 3px rgba(0,0,0,0.1);
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+  }
+
+  input[type="submit"] {
+    background-color: #729d34;
+    border: none;
+    padding: 0.5em;
+    font-size: inherit;
+    color: white;
+    opacity: 0.6;
+    cursor: pointer;
+  }
+  input[type="submit"][disabled] {
+    cursor: default;
+    opacity: 0.3;
+  }
+  input[type="submit"]:hover, input[type="submit"]:focus {
+    opacity: 1;
+    outline: none;
+  }
+  input[type="submit"][disabled]:hover {
+    opacity: 0.3;
+  }
+</style>
+
+<script>
+  component.exports = {
+    decorators: {
+      counter: function(node, length) {
+        $(node).attr('length', length).characterCounter();
+        return {
+          teardown: function(){},
+        };
+      },
+    },
+    data: function(){
+      return {
+        page: 0,
+        fromNow: function(date) {
+          return moment(date).fromNow();
+        },
+        enabled: function(text) {
+          return text.length && text.length <= 2000;
+        },
+      };
+    },
+    post: function ( event, text ) {
+      // prevent the page from reloading
+      event.original.preventDefault();
+
+      var comment = {
+        auth_user: {
+          first_name: this.get('user.first_name'),
+          last_name: this.get('user.last_name'),
+        },
+        comm: {
+          body: text,
+          created_by: this.get('user.id'),
+        },
+      };
+      // fire an event, so we can (for example)
+      // save the comment to our server
+      this.fire( 'newComment', comment);
+
+      // reset the form
+      document.activeElement.blur();
+      this.set({ author: '', text: '' });
+    },
+
+    edit: function ( event, index ) {
+      // prevent the page from reloading
+      event.original.preventDefault();
+      var comment = this.get('comments.' + index + '.comm');
+      if (comment.editing) {
+        this.fire( 'saveEditComment', comment);
+        this.set('comments.' + index + '.comm.editing', false);
+      } else {
+        this.set('comments.' + index + '.comm.editing', true);
+      };
+    },
+
+    delete: function ( event, index ) {
+      // prevent the page from reloading
+      event.original.preventDefault();
+      var comment = this.get('comments.' + index + '.comm');
+      this.fire( 'deleteComment', comment);
+      this.splice('comments', index, 1)
+    },
+
+    prev: function ( event ) {
+      // prevent the page from reloading
+      event.original.preventDefault();
+      this.subtract('page');
+      this.fire('fetchComments', this.get('page'));
+    },
+
+    next: function ( event ) {
+      // prevent the page from reloading
+      event.original.preventDefault();
+      this.add('page');
+      this.fire('fetchComments', this.get('page'));
+    }
+  };
+</script>
