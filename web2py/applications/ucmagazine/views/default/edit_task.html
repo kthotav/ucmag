@@ -1,0 +1,14 @@
+{{extend 'tasklayout.html'}}
+
+<!-- This page allows administrators/managers to examine the task that has been submitted and respond accordingly. -->
+
+
+<div style="text-align:right">
+    {{=A('Back to View Task', _href = URL('view_task', args=task.id), _class="btn btn-primary")}}
+</div>
+
+<!-- Add spacing in between the form and the button. -->
+<br>
+
+<!-- Edit form for the manager. See default.py for edit_task(). -->
+{{=form}}

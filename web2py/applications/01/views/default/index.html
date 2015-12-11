@@ -1,0 +1,54 @@
+{{extend 'homelayout.html'}}
+
+<!-- We are using MaterializeCSS's slider on our home page. Refer to the documentation.
+     http://materializecss.com/media.html -->
+
+<div class="slider fullscreen">
+    <ul class="slides">
+
+      <!-- SLIDER 1 -->
+      <li>
+        <img src={{=URL('static', 'images/slider1.jpg')}} style="opacity:0.4"> <!-- random image -->
+        <div class="caption center-align">
+          <h3 >Welcome to UC Magazine!</h3>
+          <h5 class="light white-text">Create your stories!</h5>
+        </div>
+      </li>
+
+      <!-- SLIDER 2 -->
+      <li>
+        <img src={{=URL('static', 'images/slider2.jpg')}} style="opacity:0.4">  <!-- random image -->
+        <div class="caption center-align">
+          <h3>Venture forth into Student Life!</h3>
+          <h5 class="light white-text">Stay updated on student-related news</h5>
+        </div>
+      </li>
+
+      <!-- SLIDER 3 -->
+      <li>
+          <img src={{=URL('static', 'images/slider3.jpg')}} style="opacity:0.4"> <!-- random image -->
+        <div class="caption left-align">
+          <h3>Discover and explore UC campuses!</h3>
+          <h5 class="light white-text">Get updated on the latest events</h5>
+        </div>
+      </li>
+
+      <!-- SLIDER 4 -->
+      <li>
+          <img src={{=URL('static', 'images/slider4.jpg')}} style="opacity:0.4"> <!-- random image -->
+        <div class="caption right-align">
+          <h3>Keep up with your favorite sports team!</h3>
+          <h5 class="light white-text">Stay updated with sports </h5>
+        </div>
+      </li>
+
+    </ul>
+  </div>
+
+<script>
+$(document).ready(function(){
+      $('.slider').slider({full_width: true});
+    });
+
+
+</script>

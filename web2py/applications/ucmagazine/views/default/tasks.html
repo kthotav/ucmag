@@ -1,0 +1,36 @@
+{{extend 'tasklayout.html'}}
+
+<!-- This page is a view that is responsible for displaying every task that has been created. Please see default.py: tasks() and
+     issuereport.py: 'task' table for more information
+-->
+
+<!-- Using Basic Card design from http://materializecss.com/cards.html -->
+<div class="row">
+        <div class="col s12 m12">
+          <div class="card ">
+            <div class="card-content black-text">
+              <span class="card-title black-text"><h2>Welcome to Our Bug/Issue Report Section!</h2></span>
+
+                <p><h6>If you have an issue or concern you'd like to raise, please click the "Report an Issue" button below to get started.</h6></p>
+
+                <br>
+
+                {{=A('Report an Issue', _href=URL('create_task'), _class="btn btn-primary")}}
+
+            </div>
+
+          </div>
+        </div>
+</div>
+
+<!-- Show every task as specified in default.py: tasks() -->
+<div class="row">
+        <div class="col s12 m12">
+          <div class="card ">
+            <div class="card-content black-text">
+                {{=grid}}
+            </div>
+          </div>
+        </div>
+</div>
+

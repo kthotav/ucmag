@@ -1,0 +1,20 @@
+{{extend 'tasklayout.html'}}
+
+<!-- This page is basically the form that task creators will use to create a task. By "task" we mean any bug,
+     issue, or question that is brought up with an administrator.
+-->
+
+
+
+<!-- Add some spacing in between the buttons/form and the navbar. -->
+<br>
+<br>
+<br>
+
+<!-- Take the user back to tasks.html -->
+{{=A('Back to Tasks', _href = URL('tasks'), _class="btn btn-default")}}
+
+<!-- Form for creating a task. See issuereport.py in the task table to see what create form constitutes. Also see
+     create_task.html
+-->
+{{=form}}

@@ -1,0 +1,674 @@
+{{extend 'layout.html'}}
+
+<!-- This page is responsible for showing all stories by the highest number of votes. It also contains code for
+     the Instagram API known as Instafeed.js. This page is basically what you see when you are on list_posts_by_votes/<category>
+-->
+
+<!-- We understand that the icons/color/style elements below are not being used.
+     However, we have decided to keep them in the code for future use to improve
+     the UI of the icons. Our input.search was for when we were using a fixed
+     floating search bar, but we ended up navigating the search bar to the navbar.
+     We didn't want to remove this because we want to keep this line of code for
+     future use. We included this note so you don't waste time trying to understand
+     why we define style elements that are not currently in use.
+-->
+
+<style>
+
+.fa-trash:hover:before{
+    content: "\f014"
+}
+
+.fa-star {
+    color:#ff9933;
+}
+
+.fa-star-o {
+    color:#ff9933;
+}
+
+.fa-star-o:hover:before{
+    content: "\f005"
+}
+
+.searchcolor {
+    background-color:#BCB0AC;
+}
+
+input.search { display: none; width: 400px; background: #846C63!important; color: white; padding: 0px 10px;}
+
+</style>
+
+
+
+<!-- Instagram Feed or Instafeed
+     We found this API here: http://instafeedjs.com/
+     Please keep in mind that if there is no Internet,
+     Instafeed does not show up.
+-->
+<script type="text/javascript">
+  $(function() {
+
+    // UCSC instafeed
+    var ucscFeed = new Instafeed({
+        clientId: '97ae5f4c024c4a91804f959f43f2635f',
+        target: 'instafeed',
+        get: 'user',
+        userId: '27267429',
+        links: true,
+        limit: 2,
+        resolution: 'thumbnail'
+    });
+
+    // UCLA instafeed
+    var uclaFeed = new Instafeed({
+        clientId: '97ae5f4c024c4a91804f959f43f2635f',
+        target: 'instafeed',
+        get: 'user',
+        userId: '461538309',
+        links: true,
+        limit: 2,
+        resolution: 'thumbnail'
+    });
+
+    // UCD instafeed
+    var ucdavisFeed = new Instafeed({
+        clientId: '97ae5f4c024c4a91804f959f43f2635f',
+        target: 'instafeed',
+        get: 'user',
+        userId: '50935360',
+        links: true,
+        limit: 2,
+        resolution: 'thumbnail'
+    });
+
+    // UCB instafeed
+    var ucbFeed = new Instafeed({
+        clientId: '97ae5f4c024c4a91804f959f43f2635f',
+        target: 'instafeed',
+        get: 'user',
+        userId: '249761036',
+        links: true,
+        limit: 2,
+        resolution: 'thumbnail'
+    });
+
+    // UCR instafeed
+    var ucrFeed = new Instafeed({
+        clientId: '97ae5f4c024c4a91804f959f43f2635f',
+        target: 'instafeed',
+        get: 'user',
+        userId: '228928590',
+        links: true,
+        limit: 2,
+        resolution: 'thumbnail'
+    });
+
+    // UCM instafeed
+    var ucmFeed = new Instafeed({
+        clientId: '97ae5f4c024c4a91804f959f43f2635f',
+        target: 'instafeed',
+        get: 'user',
+        userId: '635125226',
+        links: true,
+        limit: 2,
+        resolution: 'thumbnail'
+    });
+
+    // UCSB instafeed
+    var ucsbFeed = new Instafeed({
+        clientId: '97ae5f4c024c4a91804f959f43f2635f',
+        target: 'instafeed',
+        get: 'user',
+        userId: '248941547',
+        links: true,
+        limit: 2,
+        resolution: 'thumbnail'
+    });
+
+    // UCI instafeed
+    var uciFeed = new Instafeed({
+        clientId: '97ae5f4c024c4a91804f959f43f2635f',
+        target: 'instafeed',
+        get: 'user',
+        userId: '10889924',
+        links: true,
+        limit: 2,
+        resolution: 'thumbnail'
+    });
+
+    // UCSD instafeed
+    var ucsdFeed = new Instafeed({
+        clientId: '97ae5f4c024c4a91804f959f43f2635f',
+        target: 'instafeed',
+        get: 'user',
+        userId: '446734341',
+        links: true,
+        limit: 2,
+        resolution: 'thumbnail'
+    });
+
+    // Show instafeeds for all UCs
+    uclaFeed.run();
+    ucscFeed.run();
+    ucdavisFeed.run();
+    ucbFeed.run();
+    ucrFeed.run();
+    ucmFeed.run();
+    ucsbFeed.run();
+    uciFeed.run();
+    ucsdFeed.run();
+
+});
+</script>
+
+
+
+<!-- Display name of category -->
+{{if request.function != 'list_posts_by_author' and request.function != 'mystories' and request.function != 'search':}}
+    <h1 class=" animated fadeInDown center" style="font-family:'Lobster'; color:#86a8a8">Welcome to {{=category.name.title()}}!</h1>
+
+    <!-- Modal Trigger: Button for New Post -->
+    <a style="background-color: #86a8a8" href="#modal1" class="left waves-effect waves-circle waves-green btn-floating secondary-content modal-trigger tooltipped" data-position="top" data-delay="50" data-tooltip="Add Story">
+          <i class="material-icons">add</i>
+      </a>
+{{else:}}
+    <h3 class="animated fadeInDown center">{{=response.title}}</h3>
+{{pass}}
+
+
+
+<!-- Buttons for list_posts_by... -->
+<!-- If the user the user is on the list_posts_by_votes page, then... -->
+{{if request.function == 'list_posts_by_votes':}}
+    <!-- allow for there to be a button to enable the user to list posts by time of creation. -->
+    <a style="margin-left:10px; background-color: #86a8a8;" href="{{=URL('list_posts_by_datetime', args=category.name)}}" class="left waves-effect waves-circle waves-green btn-floating secondary-content tooltipped" data-position="top" data-delay="50" data-tooltip="Latest Stories">
+      <i class="material-icons">sort</i>
+    </a>
+
+<!-- If the user the user is on the list_posts_by_datetime page, then... -->
+{{elif request.function=='list_posts_by_datetime':}}
+    <!-- do the same thing except have the page have a button to list posts by the highest number of votes. -->
+    <!-- {{=A('Sort by Votes', _class='waves-effect waves-light btn', _href=URL('list_posts_by_votes', args=category.name))}} -->
+    <a style="margin-left:10px; background-color: #86a8a8;" href="{{=URL('list_posts_by_votes', args=category.name)}}" class="left waves-effect waves-circle waves-green btn-floating secondary-content tooltipped" data-position="top" data-delay="50" data-tooltip="Most Popular">
+      <i class="material-icons">thumb_up</i>
+    </a>
+    <!-- This branch is not taken -->
+{{pass}}
+
+
+
+{{if request.function != 'list_posts_by_author' and request.function != 'mystories' and request.function != 'search':}}
+    <!-- Modal Structure -->
+    <div id="modal1" class="modal large" width=120px style="background-color:white;">
+      <div class="modal-content">
+        <h4>New Story / {{=category.name.title()}}</h4>
+        {{=form_new_post}}
+      </div>
+        <div class="modal-footer" style="background-color:white;">
+          <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Cancel</a>
+        </div>
+    </div>
+
+    <!-- Modal for Creating Stories -->
+    <div class="modal fade" id="formNewPost" role="dialog">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">×</button>
+            <h4 class="modal-title">{{=category.name.title()}} /<small> New Story</small></h4>
+          </div>
+          <div class="modal-body">
+              {{=form_new_post}}
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dropdown Trigger for UC Filtering -->
+    <div class="right">
+      <a style="background-color: #86a8a8;" id="buttonUC" class='dropdown-button waves-effect waves-light btn waves-green' href='#' data-activates='dropdownUC'>
+        {{=request.vars.uc or 'All'}}
+      </a>
+      <!-- Dropdown Structure -->
+      <ul id='dropdownUC' class='dropdown-content'>
+      {{for uc in ['[All]']+UCS:}}
+        <li><a href="{{=URL(args=request.args, vars={'uc':uc})}}">{{=uc}}</a></li>
+      {{pass}}
+      </ul>
+    </div>
+{{pass}}
+
+<!-- Make vertical space between the posts and the +New Post, SORT BY VOTES/DATE, and Filter By buttons. -->
+<br>
+<br>
+<br>
+
+
+<!-- List every post/story using the Image Card component from MaterializeCSS. See documentation for more information
+     http://materializecss.com/cards.html
+-->
+<div class="container">
+    <div class="row">
+    {{for post in rows:}}
+
+            <div id="cardPost{{=post.id}}" class="col s12 m4">
+              <div class="card hoverable medium transparent animated bounceInUp">
+                <div class="card-image waves-effect waves-block waves-light">
+                {{if post.image:}}
+                      <img class="activator" src="{{=URL(r=request, f='download', args=post.image)}}" class="img-responsive" style="opacity: 0.9">
+                {{else:}}
+                      <img class="activator" src="{{=URL('static', 'images/uc-mag-default.png')}}" class="img-responsive" style="opacity: 0.7">
+                {{pass}}
+                </div>
+
+                <!-- Define what content is shown on cards on category pages. -->
+                <div class="card-content flow-text" style="margin-top: -30px;">
+                  <span class="card-title activator grey-text text-darken-4">
+                    <p style="font-size:70%;"><strong>{{=post.title}}</strong></p></span>
+
+                    <!-- If a user clicks on "Read More" and the story is a draft, take them into edit mode. However, if the user
+                       clicks "Read More" and the story is NOT a draft AKA is published, then take the user to view the story.
+                    -->
+                    {{if auth.user and post.created_by==auth.user.id and post.draft > 0:}}
+                        <span>{{=A('Read More', _href=URL('view_post', args=post.id, vars={'mode':'edit'}), _style='color:#86a8a8')}}</span>
+                    {{else:}}
+                        <span>{{=A('Read More', _href=URL('view_post', args=post.id), _style='color:#86a8a8')}}</span>
+                    {{pass}}
+
+                    <!-- Icons: If the story is a draft, make sure to have a draft icon to indicate that it's a draft. Obviously,
+                                only the owner of the story can see these icons. If a user goes into My Stories and they have
+                                favourited a story, make sure that story shows up on their My Stories page with a star icon.
+                    -->
+                    <div id="spanFav" class="right-align">
+                    {{if auth.user and post.created_by==auth.user.id:}}
+                        {{if post.draft > 0:}}
+                          <span>
+                            <i class="material-icons tooltipped" style="color:#cc9900" data-delay="50" data-position="top" data-tooltip="Draft">
+                              description
+                            </i>
+                          </span>
+                        {{pass}}
+                              <a id="delPostLink" href="{{=URL('default', 'delete_post', args=post.id)}}"
+                                 class="material-icons tooltipped" data-delay="50" data-position="top"
+                                        data-tooltip="Delete Post" style="color:#86a8a8;">delete</a>
+                        {{elif request.function == 'mystories':}}
+                           {{=post.fav_icon}}
+                    {{pass}}
+                    </div>
+                </div>
+
+                <!-- Define what is shown when a card is clicked on for the preview mode. -->
+                <div class="card-reveal">
+
+                  <span class="card-title grey-text text-darken-4"><i class="material-icons right">close</i><h4>{{=post.title}}</h4>
+                  By {{=post.created_by.first_name}} {{=post.created_by.last_name}}
+                  <p>{{=XML(post.body[:500],sanitize=False)}}</p>
+                  </span>
+
+                  <!-- If a user clicks on "Read More" and the story is a draft, take them into edit mode. However, if the user
+                       clicks "Read More" and the story is NOT a draft AKA is published, then take the user to view the story.
+                  -->
+                  {{if auth.user and post.created_by==auth.user.id and post.draft > 0:}}
+                    <span>{{=A('Read More', _href=URL('view_post', args=post.id, vars={'mode':'edit'}), _style='color:#86a8a8')}}</span>
+
+                  {{else:}}
+                    <span>{{=A('Read More', _href=URL('view_post', args=post.id), _style='color:#86a8a8')}}</span>
+                  {{pass}}
+
+                  <!-- Icons: If the story is a draft, make sure to have a draft icon to indicate that it's a draft. Obviously,
+                              only the owner of the story can see these icons. If a user goes into My Stories and they have
+                              favourited a story, make sure that story shows up on their My Stories page with a star icon.
+                  -->
+                  <div id="spanFav" class="right-align">
+                  {{if auth.user and post.created_by==auth.user.id:}}
+                      {{if post.draft > 0:}}
+                          <span><i class="material-icons tooltipped" style="color:#cc9900"
+                                   data-delay="50" data-position="top" data-tooltip="Draft">description</i></span>
+                      {{pass}}
+
+                      <a id="delPostLink" href="{{=URL('default', 'delete_post', args=post.id)}}"
+                               class="material-icons tooltipped" data-delay="50" data-position="left" data-tooltip="Delete Post">delete</a>
+
+                  {{elif request.function == 'mystories':}}
+                            {{=post.fav_icon}}
+                  {{pass}}
+                  </div>
+
+                </div>
+              </div>
+            </div>
+      {{pass}}
+    </div>
+</div>
+
+
+<!-- Pagination for posts. Display 12 posts per page. -->
+<!-- Massimo shows how to do this in his Week 1 tutorial. See citation in documentation for more information. -->
+
+{{if request.function != 'list_posts_by_author' and request.function != 'mystories' and request.function != 'search':}}
+    {{if page>0:}}
+        {{=A('previous', _class='waves-effect waves-light btn left', _style='background-color: #86a8a8;', _href=URL(args=(category.name,page-1)))}}
+    {{pass}}
+
+    {{if len(rows)>=10:}}
+        {{=A('next', _class='waves-effect waves-light btn right', _style='background-color: #86a8a8;', _href=URL(args=(category.name, page+1)))}}
+    {{pass}}
+
+{{elif request.function == 'list_posts_by_author':}}
+    {{if page>0:}}
+        {{=A('previous', _class='waves-effect waves-light btn left', _style='background-color: #86a8a8;', _href=URL(args=(page-1),vars={'author':author_id}))}}
+    {{pass}}
+
+    {{if len(rows)>=10:}}
+        {{=A('next', _class='waves-effect waves-light btn right', _style='background-color: #86a8a8;', _href=URL(args=(page+1),vars={'author':author_id}))}}
+    {{pass}}
+
+{{elif request.function == 'search':}}
+    {{if page>0:}}
+        {{=A('previous', _class='waves-effect waves-light btn left', _style='background-color: #86a8a8;', _href=URL(args=(page-1),vars={'search_input':search_input}))}}
+    {{pass}}
+
+    {{if len(rows)>=10:}}
+        {{=A('next', _class='waves-effect waves-light btn right', _style='background-color: #86a8a8;', _href=URL(args=(page+1),vars={'search_input':search_input}))}}
+    {{pass}}
+
+{{else:}}
+    {{if page>0:}}
+        {{=A('previous', _class='waves-effect waves-light btn left',  _style='background-color: #86a8a8;', _href=URL(args=(page-1),))}}
+    {{pass}}
+
+    {{if len(rows)>=10:}}
+        {{=A('next', _class='waves-effect waves-light btn right', _style='background-color: #86a8a8;', _href=URL(args=(page+1)))}}
+    {{pass}}
+{{pass}}
+
+
+<!-- Make vertical space between Next/Previous buttons and Instafeed. -->
+<br>
+<br>
+<br>
+<br>
+
+<!-- Show Instafeed on the page -->
+<div class="container">
+  <div class="row">
+    <div class="center-align z-depth-3 animated bounceInUp" id="instafeed" style="opacity: 0.7;">
+
+    </div>
+  </div>
+</div>
+
+
+<!-- Old voting logic: A portion of the below script at 396 isn't being used. However,
+     we are still keeping this for the future if we decide to take the project beyond
+     this class. It is a useful component that we do not wish to delete.
+-->
+
+<script>
+
+$(document).ready(function(){
+ // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+ $('.modal-trigger').leanModal();
+});
+
+
+  $(document).ready(function() {
+    $('select').material_select();
+    // Disables the "Working..." message that appears during voting.
+    w2p_ajax_disable_with_message = "";
+  });
+
+
+    $('select option[value=""]').remove();
+    $('#post_uc').prepend('<option value="Choose" selected hidden >Choose One</option>');
+
+    $('#searchform').find('input').keypress(function(e) {
+        // Enter pressed?
+        if(e.which == 10 || e.which == 13) {
+            this.form.submit();
+        }
+    });
+
+/*
+    function do_ajax_vote(t,direction){
+        var id = jQuery(t).closest('tr').attr('data-id');
+        jQuery.ajax({method: 'post',url:'{{=URL('vote_callback')}}',
+                     data:{'id':id, 'direction': direction},
+                     success: function(data) {
+                        jQuery(t).closest('tr').find('.votes').html(data);
+                     } });
+
+    }
+
+    jQuery(function() {
+       jQuery('[data-direction=up]').click(function(){do_ajax_vote(this,'up');});
+       jQuery('[data-direction=down]').click(function(){do_ajax_vote(this,'down');});
+    });
+
+    $('.dropdown-button').dropdown({
+      inDuration: 300,
+      outDuration: 225,
+      constrain_width: false, // Does not change width of dropdown to that of the activator
+      hover: true, // Activate on hover
+      gutter: 0, // Spacing from edge
+      belowOrigin: false, // Displays dropdown below the button
+      alignment: 'left' // Displays dropdown with edge aligned to the left of button
+      }
+    );
+*/
+</script>
+
+
+
+<!-- FOOTER CONTENT -->
+<!-- http://materializecss.com/footer.html -->
+
+<script>
+    // http://materializecss.com/modals.html#!
+    $(document).ready(function(){
+    // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+    $('.modalabout-trigger').leanModal();
+    });
+</script>
+
+<script>
+    // http://materializecss.com/modals.html#!
+    $(document).ready(function(){
+    // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+    $('.modalprivacy-trigger').leanModal();
+    });
+</script>
+
+<script>
+    // http://materializecss.com/modals.html#!
+    $(document).ready(function(){
+    // the "href" attribute of .modal-trigger must specify the modal ID that wants to be triggered
+    $('.modalterms-trigger').leanModal();
+    });
+</script>
+
+
+<!-- http://materializecss.com/footer.html -->
+
+<footer class="page-footer">
+          <div class="container">
+            <div class="row">
+              <div class="col l6 s12">
+
+                <!-- Left Side of Footer -->
+                <h5 class="black-text">UC Magazine</h5>
+                <p>Please visit our useful links for more information.</p>
+                <br>
+
+                <p><a href="https://www.facebook.com/UCMagazines/" target="_blank"> <img border="0" src={{=URL('static', 'images/facebook1.png')}}></a>
+                <a href="https://twitter.com/UCMagazines/" target="_blank"> <img border="0" src={{=URL('static', 'images/twitter1.png')}}></a>
+                <a href="https://plus.google.com/u/0/110636705593484622040" target="_blank"> <img border="0" src={{=URL('static', 'images/googleplus.png')}}></a>
+                </p>
+
+
+              </div>
+              <div class="col l4 offset-l2 s12 row">
+                <h5 class="black-text">Links</h5>
+                <ul>
+
+                  <li> <!-- About -->
+
+                    <!-- Modal Trigger http://materializecss.com/modals.html#! -->
+                    <a class="black-text modalabout-trigger" href="#modalabout">About</a>
+
+                    <!-- Modal Structure http://materializecss.com/modals.html#! -->
+                    <div id="modalabout" class="modal">
+                      <div class="modal-content">
+                        <h4>About</h4>
+                        <p>UC Magazine is a forum-based platform for UC students from all UC campuses to get together and share their university-related stories.
+                          It is a platform to share stories about student life, campus events, and sports.</p>
+                        <p>The inception of this project came from the realization that there wasn't really a well-established way for students of different
+                          UC campuses to communicate with one another. The campus lives amongst UCs are largely segregated. UC Magazine seeks to build a
+                          bridge across these barriers to allow students the outlet that they need to learn about what's going on in various UC campuses.</p>
+                      </div>
+                      <div class="modal-footer">
+                        <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Close</a>
+                      </div>
+                    </div>
+                  </li>
+
+                  <li><!-- Privacy Policy -->
+
+                      <!-- Modal Trigger http://materializecss.com/modals.html#! -->
+                      <a class="black-text modalprivacy-trigger" href="#modalprivacy">Privacy</a>
+
+                      <!-- Modal Structure http://materializecss.com/modals.html#! -->
+                      <div id="modalprivacy" class="modal modal-fixed-footer">
+                        <div class="modal-content">
+                          <h4>Privacy</h4>
+                          <p>When you choose to use UC Magazine, you are trusting us with your information. This Privacy section is meant to inform you on what
+                          data we collect, why we collect it, and what we do with it. </p>
+                          <p>There are various ways you can use our service: You can use it to share information, communicate with other people,
+                            or create new stories. Users will be able to identify you based upon your name, but we do not share any of your sensitive
+                            credentials with any outside sources. The only information that is collected is the one you give us. Information such as user
+                            credentials during signing up for an account is only collected to grant users the right to post content in our
+                            application and to identify these users.</p>
+                          <p>The only time your information will be looked at by us is you violate our Terms of Services. Please see our Terms of Services
+                            section for more information.</p>
+                        </div>
+                        <div class="modal-footer">
+                          <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">Close</a>
+                        </div>
+                      </div>
+                  </li>
+
+
+                  <li> <!-- Terms of Service Policy -->
+
+                    <!-- Modal Trigger http://materializecss.com/modals.html#! -->
+                    <a class="black-text modalterms-trigger" href="#modalterms">Terms of Service</a>
+
+                    <!-- Modal Structure http://materializecss.com/modals.html#! -->
+                    <div id="modalterms" class="modal modal-fixed-footer">
+                      <div class="modal-content">
+                        <h4>Terms of Service</h4>
+                        <p>The services that UC Magazine provides to you are subject to the following Terms of Service ("TOS").
+                          UC Magazine reserves the right to update the TOS at any time without notice to you. </p>
+                        <h5>Member Account, Password, and Security</h5>
+                        <p>If any of the Services requires you to open an account, you must complete the registration process by providing
+                          us with current, complete and accurate information as prompted by the applicable registration form. You also will
+                          choose a password and a user name. You are entirely responsible for maintaining the confidentiality of your
+                          password and account. Furthermore, you are entirely responsible for any and all activities that occur under
+                          your account. You agree to notify UC Magazine immediately of any unauthorized use of your account or any
+                          other breach of security. UC Magazine will not be liable for any loss that you may incur as a result of
+                          someone else using your password or account, either with or without your knowledge. However, you could
+                          be held liable for losses incurred by UC Magazine or another party due to someone else using your account
+                          or password. You may not use anyone else's account at any time, without the permission of the account holder.</p>
+                        <p>IN NO EVENT SHALL UC MAGAZINE AND/OR ITS RESPECTIVE SUPPLIERS BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+                          CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+                          ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+                          PERFORMANCE OF SOFTWARE, DOCUMENTS, PROVISION OF OR FAILURE TO PROVIDE SERVICES, OR INFORMATION AVAILABLE FROM THE SERVICES.</p>
+                        <h5>No Unlawful or Prohibited Use</h5>
+                        <p>As a condition of your use of the Services, you will not use the Services for any purpose that is
+                          unlawful or prohibited by these terms, conditions, and notices. You may not use the Services in any
+                          manner that could damage, disable, overburden, or impair any UC Magazine server, or the network(s) connected
+                          to any UC Magazine server, or interfere with any other party's use and enjoyment of any Services.
+                          You may not attempt to gain unauthorized access to any Services, other accounts, computer systems or networks
+                          connected to any UC Magazine server or to any of the Services, through hacking, password mining or any other means. You may not obtain
+                          or attempt to obtain any materials or information through any means not intentionally made available through the Services.</p>
+                        <h5>Use of Services</h5>
+                        <p>The Services may contain e-mail services, bulletin board services, chat areas, news groups, forums, communities, personal web pages,
+                          calendars, photo albums, file cabinets and/or other message or communication facilities designed to enable you to communicate with
+                          others (each a "Communication Service" and collectively "Communication Services"). You agree to use the Communication Services
+                          only to post, send and receive messages and material that are proper and, when applicable, related to the particular Communication
+                          Service. By way of example, and not as a limitation, you agree that when using the Communication Services, you will not:</p>
+                        <p>(1)	Use the Communication Services in connection with surveys, contests, pyramid schemes, chain letters, junk email, spamming
+                           or any duplicative or unsolicited messages (commercial or otherwise).</p>
+                        <p>(2)	Defame, abuse, harass, stalk, threaten or otherwise violate the legal rights (such as rights of privacy and publicity) of others.</p>
+                        <p>(3)	Publish, post, upload, distribute or disseminate any inappropriate, profane, defamatory, obscene, indecent or unlawful topic,
+                           name, material or information.</p>
+                        <p>(4)	Upload, or otherwise make available, files that contain images, photographs, software or other material protected by
+                          intellectual property laws, including, by way of example, and not as limitation, copyright or trademark laws (or by rights
+                          of privacy or publicity) unless you own or control the rights thereto or have received all necessary consent to do the same.</p>
+                        <p>(5)	Use any material or information, including images or photographs, which are made available through the Services in
+                          any manner that infringes any copyright, trademark, patent, trade secret, or other proprietary right of any party.</p>
+                        <p>(6)	Upload files that contain viruses, Trojan horses, worms, time bombs, cancelbots, corrupted files, or any other
+                          similar software or programs that may damage the operation of another's computer or property of another.</p>
+                        <p>(7)	Advertise or offer to sell or buy any goods or services for any business purpose, unless such Communication Services
+                          specifically allows such messages.</p>
+                        <p>(8)	Download any file posted by another user of a Communication Service that you know, or reasonably should know,
+                          cannot be legally reproduced, displayed, performed, and/or distributed in such manner.</p>
+                        <p>(9)	Falsify or delete any copyright management information, such as author attributions, legal or other
+                          proper notices or proprietary designations or labels of the origin or source of software or other material contained in a file that is uploaded.</p>
+                        <p>(10)	Restrict or inhibit any other user from using and enjoying the Communication Services.</p>
+                        <p>(11)	Violate any code of conduct or other guidelines which may be applicable for any particular Communication Service.</p>
+                        <p>(12)	Harvest or otherwise collect information about others, including e-mail addresses.</p>
+                        <p>(13)	Violate any applicable laws or regulations.</p>
+                        <p>(14)	Create a false identity for the purpose of misleading others.</p>
+                        <p>(15)	Use, download or otherwise copy, or provide (whether or not for a fee) to a person or entity any directory
+                          of users of the Services or other user or usage information or any portion thereof.</p>
+                        <h5>Materials Provided to UC Magazine or Posted at Any UC Magazine Webpage</h5>
+                        <p>UC Magazine does not claim ownership of the materials you provide to UC Magazine (including feedback and suggestions) or post,
+                          upload, input or submit to any Services or its associated services for review by the general public, or by the members of any
+                          public or private community, (each a "Submission" and collectively "Submissions"). However, by posting, uploading, inputting,
+                          providing or submitting ("Posting") your Submission you are granting UC Magazine, its affiliated companies and necessary
+                          sublicensees permission to use your Submission in connection with the operation of their Internet businesses (including,
+                          without limitation, all UC Magazine Services), including, without limitation, the license rights to: copy, distribute,
+                          transmit, publicly display, publicly perform, reproduce, edit, translate and reformat your Submission; to publish your
+                          name in connection with your Submission; and the right to sublicense such rights to any supplier of the Services. No
+                          compensation will be paid with respect to the use of your Submission, as provided herein. UC Magazine is under no obligation to
+                           post or use any Submission you may provide and UC Magazine may remove any Submission at any time in its sole discretion.
+                           By Posting a Submission you warrant and represent that you own or otherwise control all of the rights to your Submission as
+                            described in these Terms of Use including, without limitation, all the rights necessary for you to provide, post, upload,
+                            input or submit the Submissions. In addition to the warranty and representation set forth above, by Posting a Submission
+                            that contain images, photographs, pictures or that are otherwise graphical in whole or in part ("Images"), you warrant
+                            and represent that (a) you are the copyright owner of such Images, or that the copyright owner of such Images has
+                            granted you permission to use such Images or any content and/or images contained in such Images consistent with the
+                            manner and purpose of your use and as otherwise permitted by these Terms of Use and the Services, (b) you have the rights
+                            necessary to grant the licenses and sublicenses described in these Terms of Use, and (c) that each person depicted in such
+                            Images, if any, has provided consent to the use of the Images as set forth in these Terms of Use, including, by way of example,
+                            and not as a limitation, the distribution, public display and reproduction of such Images. By Posting Images, you are granting (a)
+                            to all members of your private community (for each such Images available to members of such private community), and/or (b) to the
+                            general public (for each such Images available anywhere on the Services, other than a private community), permission to use your
+                            Images in connection with the use, as permitted by these Terms of Use, of any of the Services, (including, by way of example, and
+                            not as a limitation, making prints and gift items which include such Images), and including, without limitation, a non-exclusive,
+                            world-wide, royalty-free license to: copy, distribute, transmit, publicly display, publicly perform, reproduce, edit, translate and
+                            reformat your Images without having your name attached to such Images, and the right to sublicense such rights to any supplier of
+                            the Services. The licenses granted in the preceding sentences for a Images will terminate at the time you completely remove such
+                            Images from the Services, provided that, such termination shall not affect any licenses granted in connection with such Images
+                            prior to the time you completely remove such Images. No compensation will be paid with respect to the use of your Images.</p>
+                      </div>
+
+                      <div class="modal-footer">
+                        <a href="#!" class=" modal-action modal-close waves-effect waves-green btn-flat">Close</a>
+                      </div>
+                    </div>
+
+                  </li>
+                  <li>
+                      {{=A('Report an Issue', _href=URL('tasks'), _class="Report an Issue", _style='color:black')}}
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+</footer>
