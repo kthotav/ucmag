@@ -1,5 +1,6 @@
 #UC Magazine  
 
+Contributors: Abhishek Lakshya, Shravya Neeruganti, Venkata Karthik Thota
 ### What problem are we trying to solve?  
 + Connect with students across other UC Campuses
 + Share information, event details, news, etc
